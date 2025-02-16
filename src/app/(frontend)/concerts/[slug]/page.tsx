@@ -11,6 +11,8 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { Metadata } from 'next'
 import { Media, Venue } from '@/payload-types'
+import { patchDate } from '@/lib/utils'
+import FadeImage from '@/app/components/ui/fade-image'
 
 const payload = await getPayload({ config: configPromise })
 
@@ -187,7 +189,7 @@ export default async function ConcertPage({ params }: { params: Promise<{ slug: 
 
   concert.artists = enhancedArtists
 
-  const formattedDate = new Date(concert?.startDate).toLocaleDateString('es-ES', {
+  const formattedDate = patchDate(concert?.startDate).toLocaleDateString('es-ES', {
     weekday: 'long',
     year: 'numeric',
     month: 'long',
@@ -289,7 +291,7 @@ export default async function ConcertPage({ params }: { params: Promise<{ slug: 
             <CardContent className="p-0">
               <div className="rounded-lg bg-muted">
                 {concert.poster && (
-                  <Image
+                  <FadeImage
                     src={getPosterUrl(concert.poster)}
                     alt={concert.title}
                     width={800}
@@ -304,7 +306,7 @@ export default async function ConcertPage({ params }: { params: Promise<{ slug: 
           {concert?.venue && (
             <Card>
               <CardHeader className="p-0">
-                <Image
+                <FadeImage
                   src={getVenueImageUrl(concert.venue)}
                   alt={getVenueName(concert.venue)}
                   width={800}

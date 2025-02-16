@@ -6,6 +6,7 @@ import { PaginationControls } from '../components/ui/pagination-control'
 import { CollectionSlug, getPayload } from 'payload'
 import { Metadata } from 'next'
 import configPromise from '@payload-config'
+import { patchDate } from '@/lib/utils'
 
 export const metadata: Metadata = {
   title: 'Conciertapp | Descubre los mejores conciertos en Chile',
@@ -149,10 +150,6 @@ async function ConcertList({
   const concerts = await payload.find(query)
   const totalPages = Math.ceil(concerts.totalDocs / ITEMS_PER_PAGE)
 
-  const patchDate = (date: string) => {
-    const originalDate = new Date(date);
-    return new Date(originalDate.setDate(originalDate.getDate() - 1));
-  }
 
   return (
     <>

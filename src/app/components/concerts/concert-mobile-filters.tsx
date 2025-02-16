@@ -18,12 +18,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
-import { Calendar } from '@/components/ui/calendar'
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
-import { X, SlidersHorizontal, CalendarIcon, ChevronLeft, ChevronRight } from 'lucide-react'
+import { X, SlidersHorizontal } from 'lucide-react'
 import { format } from 'date-fns'
 import { es } from 'date-fns/locale'
-import { cn } from '@/lib/utils'
 import { DateRange } from 'react-day-picker'
 
 interface MobileFiltersProps {
@@ -43,13 +40,10 @@ export function MobileFilters({
   updateFilters,
   handleQuickDateFilter,
   clearAllFilters,
-  date,
-  setDate,
   activeQuickFilter
 }: MobileFiltersProps) {
   const [isOpen, setIsOpen] = useState(false)
   const [searchTerm, setSearchTerm] = useState(searchParams.get('search') || '')
-  const [calendarOpen, setCalendarOpen] = useState(false)
 
   // Contadores para el indicador de filtros activos
   const selectedTags = searchParams.get('tag')?.split(',').filter(Boolean) || []
@@ -85,6 +79,14 @@ export function MobileFilters({
       >
         Esta semana
       </Button>
+      <Button
+        variant={activeQuickFilter === 'thisWeek' ? 'default' : 'outline'}
+        size="sm"
+        className="shrink-0"
+        onClick={() => handleQuickDateFilter('thisMonth')}
+      >
+        Este mes
+      </Button>
     </div>
   )
 
@@ -119,14 +121,15 @@ export function MobileFilters({
           )
         })}
         {hasDateFilter && (
-          <Badge variant="secondary" className="shrink-0">
-            {format(new Date(searchParams.get('dateFrom')!), 'P', { locale: es })}
-            <X 
-              className="h-3 w-3 ml-1" 
-              onClick={() => updateFilters({ dateFrom: '', dateTo: '' })}
-            />
-          </Badge>
-        )}
+            <Badge variant="secondary">
+              {format(new Date(searchParams.get('dateFrom')!), 'P', { locale: es })} -{' '}
+              {format(new Date(searchParams.get('dateTo')!), 'P', { locale: es })}
+              <X 
+                className="h-3 w-3 ml-1 cursor-pointer" 
+                onClick={() => updateFilters({ dateFrom: '', dateTo: '' })}
+              />
+            </Badge>
+          )}
       </div>
     )
   }
@@ -182,54 +185,6 @@ export function MobileFilters({
                 <div className="space-y-2">
                   <h3 className="text-sm font-medium">Fechas</h3>
                   <QuickDateFilters />
-                  <Popover open={calendarOpen} onOpenChange={setCalendarOpen}>
-                    <PopoverTrigger asChild>
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        className={cn(
-                          'w-full justify-start text-left font-normal',
-                          !date && 'text-muted-foreground'
-                        )}
-                      >
-                        <CalendarIcon className="mr-2 h-4 w-4" />
-                        {date?.from ? (
-                          date.to ? (
-                            <>
-                              {format(date.from, 'P', { locale: es })} -{' '}
-                              {format(date.to, 'P', { locale: es })}
-                            </>
-                          ) : (
-                            format(date.from, 'P', { locale: es })
-                          )
-                        ) : (
-                          'Seleccionar fechas'
-                        )}
-                      </Button>
-                    </PopoverTrigger>
-                    <PopoverContent className="w-auto p-0 bg-white" align="start">
-                      <Calendar
-                        initialFocus
-                        mode="range"
-                        defaultMonth={date?.from}
-                        selected={date}
-                        onSelect={(newDate) => {
-                          setDate(newDate)
-                          if (newDate?.from) {
-                            updateFilters({
-                              dateFrom: newDate.from.toISOString(),
-                              dateTo: newDate.to ? newDate.to.toISOString() : newDate.from.toISOString(),
-                            })
-                          } else {
-                            updateFilters({ dateFrom: '', dateTo: '' })
-                          }
-                          setCalendarOpen(false)
-                        }}
-                        numberOfMonths={1}
-                        locale={es}
-                      />
-                    </PopoverContent>
-                  </Popover>
                 </div>
 
                 <div className="space-y-2">
