@@ -2,6 +2,7 @@
 import { NextResponse } from 'next/server'
 import { getPayload } from 'payload'
 import configPromise from '@payload-config'
+import { validateApiKey } from '@/app/utils'
 
 const payload = await getPayload({ config: configPromise })
 
@@ -22,8 +23,17 @@ function generateSlug(title: string, venueName: string): string {
   return `${normalizedTitle}-en-${normalizedVenue}`
 }
 
-export async function POST() {
+export async function POST(request: Request) {
   try {
+    if (!validateApiKey(request)) {
+      return NextResponse.json(
+        {
+          success: false,
+          error: 'Unauthorized access',
+        },
+        { status: 401 },
+      )
+    }
     // Get concerts without slugs or with empty slugs
     const concerts = await payload.find({
       collection: 'concerts',
