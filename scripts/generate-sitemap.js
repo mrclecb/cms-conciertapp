@@ -4,14 +4,14 @@ import { SitemapStream, streamToPromise } from 'sitemap';
 import { Readable } from 'stream';
 import fs from 'fs';
 import path from 'path';
+import payloadConfig from '../payload.config.ts'; // Ajusta esta ruta según tu estructura
 
 async function generateSitemap() {
   try {
-    // Inicializar Payload
+    // Inicializar Payload con la configuración
     await payload.init({
-      secret: process.env.PAYLOAD_SECRET,
-      mongoURL: process.env.DATABASE_URI,
-      local: true
+      config: payloadConfig,
+      local: true // Esto permite ejecutar Payload sin Express
     });
 
     // Crear un stream de sitemap
@@ -42,6 +42,7 @@ async function generateSitemap() {
 
         // Agregar cada documento a los links
         docs.docs.forEach(doc => {
+          // Asegúrate de ajustar esta ruta según tu estructura de URLs
           links.push({
             url: `/${collection.slug}/${doc.slug || doc.id}`,
             changefreq: 'weekly',
