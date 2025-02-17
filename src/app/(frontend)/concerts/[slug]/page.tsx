@@ -136,8 +136,6 @@ export default async function ConcertPage({
     notFound();
   }
 
-  console.log('concert.date', concert.startDate);
-
   // Get setlists for each artist and enhance the concert object
   const enhancedArtists = await Promise.all(
     (concert.artists || []).map(async (value: string | Artist) => {
@@ -156,7 +154,6 @@ export default async function ConcertPage({
   concert.artists = enhancedArtists as (string | Artist)[]
 
   const formattedDate = formatDate(concert.startDate);
-  console.log('concert.date', concert.startDate);
 
   return <div>
             <script
