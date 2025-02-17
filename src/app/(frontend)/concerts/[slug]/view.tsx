@@ -11,8 +11,6 @@ import DynamicArtistGrid from '@/app/components/artists/dynamic-artist-grid';
 import VenueInfoTabs from '@/app/components/concerts/concert-venue-tabs';
 
 const ConcertView: React.FC<ConcertViewProps> = ({ concert, formattedDate }) => {
-
-
     const populatedArtists = concert?.artists?.filter((artist): artist is Artist => 
         typeof artist !== 'string'
       ) || [];
@@ -25,13 +23,35 @@ const ConcertView: React.FC<ConcertViewProps> = ({ concert, formattedDate }) => 
 
   const getVenueName = (venue: string | Venue): string => {
     if (typeof venue === 'string') return venue;
-    return venue.name;
+    return venue.name || '';
   };
-  
-  const venueInfo = {
+
+  const getVenueAddress = (venue: string | Venue): string => {
+    if (typeof venue === 'string') return venue;
+    return venue.address || ''; 
+  };
+
+  const getVenueImageUrl = (venue: string | Venue): string => {
+    if (typeof venue === 'string') {
+      return '';
+    }
+    if (typeof venue.images?.[0]?.image === 'string') {
+      return '';
+    }
+    return venue.images?.[0]?.image?.url || '';
+  }
+
+
+  const venueSection = {
+    name: getVenueName(concert.venue),
+    address: getVenueAddress(concert.venue),
+    imageUrl: getVenueImageUrl(concert.venue)
+  }
+  const info = {
     schedule: concert.schedule || null,
     venueMaps: concert.venueMaps || null,
     additionalInfo: concert.additionalInfo || null,
+    venue: venueSection,
   };
 
 
@@ -72,6 +92,11 @@ const ConcertView: React.FC<ConcertViewProps> = ({ concert, formattedDate }) => 
 
       {/* Main Content Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        {/* Info Tabs */}
+        <div className="">
+            <VenueInfoTabs info={info} />
+        </div>
+
         {/* Poster and Venue Info */}
         <div className="space-y-8">
           {concert.poster && (
@@ -91,11 +116,6 @@ const ConcertView: React.FC<ConcertViewProps> = ({ concert, formattedDate }) => 
 
         {/* Artists Grid with Dynamic Setlist */}
          <DynamicArtistGrid artists={populatedArtists} />
-
-         {/* Venue Info Tabs */}
-        <div className="">
-            <VenueInfoTabs info={venueInfo} />
-        </div>
       </div>
     </main>
   );
