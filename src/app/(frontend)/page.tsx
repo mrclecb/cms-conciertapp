@@ -6,7 +6,7 @@ import { PaginationControls } from '../components/ui/pagination-control'
 import { CollectionSlug, getPayload } from 'payload'
 import { Metadata } from 'next'
 import configPromise from '@payload-config'
-import { patchDate } from '@/lib/utils'
+import { formatDate } from '../lib/utils'
 
 export const metadata: Metadata = {
   title: 'Conciertapp | Descubre los mejores conciertos en Chile',
@@ -153,30 +153,27 @@ async function ConcertList({
 
   return (
     <>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {concerts.docs.map((concert: any) => (
-          <ConcertCard
-            slug={concert.slug}
-            key={concert.id}
-            id={concert.id}
-            title={concert.title}
-            date={patchDate(concert.startDate).toLocaleDateString('es-ES', {
-              weekday: 'long',
-              year: 'numeric',
-              month: 'long',
-              day: 'numeric',
-            })}
-            venue={concert.venue.name}
-            artists={concert.artists}
-          />
-        ))}
 
-        {concerts.docs.length === 0 && (
-          <p className="col-span-full text-center text-muted-foreground">
-            No se encontraron conciertos que coincidan con los filtros seleccionados
-          </p>
-        )}
-      </div>
+<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+  {concerts.docs.map((concert: any) => (
+    <ConcertCard
+      key={concert.id}
+      id={concert.id}
+      slug={concert.slug}
+      title={concert.title}
+      date={formatDate(concert.startDate)}
+      venue={concert.venue.name}
+      artists={concert.artists}
+      poster={concert.poster}
+    />
+  ))}
+
+  {concerts.docs.length === 0 && (
+    <p className="col-span-full text-center text-muted-foreground">
+      No se encontraron conciertos que coincidan con los filtros seleccionados
+    </p>
+  )}
+</div>
 
       {totalPages > 1 && (
         <PaginationControls

@@ -58,7 +58,7 @@ export function MobileFilters({
       <Button
         variant={activeQuickFilter === 'today' ? 'default' : 'outline'}
         size="sm"
-        className="shrink-0"
+        className={activeQuickFilter === 'today' ? 'bg-black text-white shrink-0' : 'shrink-0'}
         onClick={() => handleQuickDateFilter('today')}
       >
         Hoy
@@ -66,23 +66,23 @@ export function MobileFilters({
       <Button
         variant={activeQuickFilter === 'tomorrow' ? 'default' : 'outline'}
         size="sm"
-        className="shrink-0"
+        className={activeQuickFilter === 'tomorrow' ? 'bg-black text-white shrink-0' : 'shrink-0'}
         onClick={() => handleQuickDateFilter('tomorrow')}
       >
         Mañana
       </Button>
       <Button
         variant={activeQuickFilter === 'thisWeek' ? 'default' : 'outline'}
+        className={activeQuickFilter === 'thisWeek' ? 'bg-black text-white shrink-0' : 'shrink-0'}
         size="sm"
-        className="shrink-0"
         onClick={() => handleQuickDateFilter('thisWeek')}
       >
         Esta semana
       </Button>
       <Button
-        variant={activeQuickFilter === 'thisWeek' ? 'default' : 'outline'}
+        variant={activeQuickFilter === 'thisMonth' ? 'default' : 'outline'}
         size="sm"
-        className="shrink-0"
+        className={activeQuickFilter  === 'thisMonth' ? 'bg-black text-white shrink-0' : 'shrink-0'}
         onClick={() => handleQuickDateFilter('thisMonth')}
       >
         Este mes
@@ -96,7 +96,7 @@ export function MobileFilters({
     return (
       <div className="flex gap-2 overflow-x-auto py-4 -mx-4 px-4">
         {hasSearch && (
-          <Badge variant="secondary" className="shrink-0">
+          <Badge variant="secondary" className="shrink-0 font-normal">
             {searchParams.get('search')}
             <X 
               className="h-3 w-3 ml-1" 
@@ -108,7 +108,7 @@ export function MobileFilters({
           const tag = tags.find(t => t.id === tagId)
           if (!tag) return null
           return (
-            <Badge key={tagId} variant="secondary" className="shrink-0">
+            <Badge key={tagId} variant="secondary" className="shrink-0 font-normal">
               {tag.name}
               <X 
                 className="h-3 w-3 ml-1" 
@@ -121,7 +121,7 @@ export function MobileFilters({
           )
         })}
         {hasDateFilter && (
-            <Badge variant="secondary">
+            <Badge variant="secondary" className='font-normal'>
               {format(new Date(searchParams.get('dateFrom')!), 'P', { locale: es })} -{' '}
               {format(new Date(searchParams.get('dateTo')!), 'P', { locale: es })}
               <X 
@@ -151,7 +151,7 @@ export function MobileFilters({
           />
           <Sheet open={isOpen} onOpenChange={setIsOpen}>
             <SheetTrigger asChild>
-              <Button variant="outline" size="sm" className="relative shrink-0">
+              <Button variant="outline" size="sm" className="relative shrink-0" aria-label='Ver opciones de filtros'>
                 <SlidersHorizontal className="h-4 w-4" />
                 {activeFiltersCount > 0 && (
                   <span className="absolute -top-1 -right-1 h-4 w-4 bg-black text-white rounded-full text-xs flex items-center justify-center">
@@ -160,7 +160,7 @@ export function MobileFilters({
                 )}
               </Button>
             </SheetTrigger>
-            <SheetContent side="bottom" className="h-[90vh] bg-white">
+            <SheetContent side="bottom" className="h-[75vh] bg-white">
               <SheetHeader className="pb-4">
                 <SheetTitle>Filtros</SheetTitle>
               </SheetHeader>
@@ -196,6 +196,7 @@ export function MobileFilters({
                         <Button
                           key={tag.id}
                           variant={isSelected ? 'default' : 'outline'}
+                          className={isSelected ? 'bg-black text-white' : ''}
                           size="sm"
                           onClick={() => {
                             const currentTags = new Set(selectedTags)

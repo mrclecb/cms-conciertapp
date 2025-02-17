@@ -53,6 +53,7 @@ export function DesktopFilters({
         variant={activeQuickFilter === 'today' ? 'default' : 'outline'}
         size="sm"
         onClick={() => handleQuickDateFilter('today')}
+        className={activeQuickFilter === 'today' ? 'bg-black text-white' : ''}
       >
         Hoy
       </Button>
@@ -60,6 +61,8 @@ export function DesktopFilters({
         variant={activeQuickFilter === 'tomorrow' ? 'default' : 'outline'}
         size="sm"
         onClick={() => handleQuickDateFilter('tomorrow')}
+        className={activeQuickFilter === 'tomorrow' ? 'bg-black text-white' : ''}
+
       >
         Mañana
       </Button>
@@ -67,11 +70,14 @@ export function DesktopFilters({
         variant={activeQuickFilter === 'thisWeek' ? 'default' : 'outline'}
         size="sm"
         onClick={() => handleQuickDateFilter('thisWeek')}
+        className={activeQuickFilter === 'thisWeek' ? 'bg-black text-white' : ''}
+
       >
         Esta semana
       </Button>
       <Button
         variant={activeQuickFilter === 'thisMonth' ? 'default' : 'outline'}
+        className={activeQuickFilter === 'thisMonth' ? 'bg-black text-white' : ''}
         size="sm"
         onClick={() => handleQuickDateFilter('thisMonth')}
       >
@@ -88,7 +94,7 @@ export function DesktopFilters({
         <span className="text-sm text-gray-500">Filtros activos:</span>
         <div className="flex flex-wrap gap-2">
           {hasSearch && (
-            <Badge variant="secondary">
+            <Badge variant="secondary" className='font-normal'>
               Búsqueda: {searchParams.get('search')}
               <X 
                 className="h-3 w-3 ml-1 cursor-pointer" 
@@ -100,7 +106,7 @@ export function DesktopFilters({
             const tag = tags.find(t => t.id === tagId)
             if (!tag) return null
             return (
-              <Badge key={tagId} variant="secondary">
+              <Badge key={tagId} variant="secondary" className='font-normal'>
                 {tag.name}
                 <X 
                   className="h-3 w-3 ml-1 cursor-pointer" 
@@ -113,7 +119,7 @@ export function DesktopFilters({
             )
           })}
           {hasDateFilter && (
-            <Badge variant="secondary">
+            <Badge variant="secondary" className='font-normal'>
               {format(new Date(searchParams.get('dateFrom')!), 'P', { locale: es })} -{' '}
               {format(new Date(searchParams.get('dateTo')!), 'P', { locale: es })}
               <X 
@@ -238,6 +244,7 @@ export function DesktopFilters({
               <Button
                 key={tag.id}
                 variant={isSelected ? 'default' : 'outline'}
+                className={isSelected ? 'bg-black text-white' : ''}
                 size="sm"
                 onClick={() => {
                   const currentTags = new Set(selectedTags)
