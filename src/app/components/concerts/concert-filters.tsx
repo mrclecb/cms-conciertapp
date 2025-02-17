@@ -37,7 +37,7 @@ export function ConcertFilters({ tags }: ConcertFiltersProps) {
     const params = new URLSearchParams(searchParams.toString())
 
     // Si estamos actualizando los tags, eliminar el parámetro page
-    if ('tag' in newParams || 'dateFrom' in newParams) {
+    if ('tag' in newParams || 'dateFrom' in newParams || 'search' in newParams) {
       params.delete('page')
     }
 

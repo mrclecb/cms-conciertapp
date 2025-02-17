@@ -18,12 +18,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
-import { Calendar } from '@/components/ui/calendar'
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
-import { X, SlidersHorizontal, CalendarIcon, ChevronLeft, ChevronRight } from 'lucide-react'
+import { X, SlidersHorizontal } from 'lucide-react'
 import { format } from 'date-fns'
 import { es } from 'date-fns/locale'
-import { cn } from '@/lib/utils'
 import { DateRange } from 'react-day-picker'
 
 interface MobileFiltersProps {
@@ -43,13 +40,10 @@ export function MobileFilters({
   updateFilters,
   handleQuickDateFilter,
   clearAllFilters,
-  date,
-  setDate,
   activeQuickFilter
 }: MobileFiltersProps) {
   const [isOpen, setIsOpen] = useState(false)
   const [searchTerm, setSearchTerm] = useState(searchParams.get('search') || '')
-  const [calendarOpen, setCalendarOpen] = useState(false)
 
   // Contadores para el indicador de filtros activos
   const selectedTags = searchParams.get('tag')?.split(',').filter(Boolean) || []
@@ -64,7 +58,7 @@ export function MobileFilters({
       <Button
         variant={activeQuickFilter === 'today' ? 'default' : 'outline'}
         size="sm"
-        className="shrink-0"
+        className={activeQuickFilter === 'today' ? 'bg-black text-white shrink-0' : 'shrink-0'}
         onClick={() => handleQuickDateFilter('today')}
       >
         Hoy
@@ -72,18 +66,26 @@ export function MobileFilters({
       <Button
         variant={activeQuickFilter === 'tomorrow' ? 'default' : 'outline'}
         size="sm"
-        className="shrink-0"
+        className={activeQuickFilter === 'tomorrow' ? 'bg-black text-white shrink-0' : 'shrink-0'}
         onClick={() => handleQuickDateFilter('tomorrow')}
       >
         Mañana
       </Button>
       <Button
         variant={activeQuickFilter === 'thisWeek' ? 'default' : 'outline'}
+        className={activeQuickFilter === 'thisWeek' ? 'bg-black text-white shrink-0' : 'shrink-0'}
         size="sm"
-        className="shrink-0"
         onClick={() => handleQuickDateFilter('thisWeek')}
       >
         Esta semana
+      </Button>
+      <Button
+        variant={activeQuickFilter === 'thisMonth' ? 'default' : 'outline'}
+        size="sm"
+        className={activeQuickFilter  === 'thisMonth' ? 'bg-black text-white shrink-0' : 'shrink-0'}
+        onClick={() => handleQuickDateFilter('thisMonth')}
+      >
+        Este mes
       </Button>
     </div>
   )
@@ -94,7 +96,7 @@ export function MobileFilters({
     return (
       <div className="flex gap-2 overflow-x-auto py-4 -mx-4 px-4">
         {hasSearch && (
-          <Badge variant="secondary" className="shrink-0">
+          <Badge variant="secondary" className="shrink-0 font-normal">
             {searchParams.get('search')}
             <X 
               className="h-3 w-3 ml-1" 
@@ -106,7 +108,7 @@ export function MobileFilters({
           const tag = tags.find(t => t.id === tagId)
           if (!tag) return null
           return (
-            <Badge key={tagId} variant="secondary" className="shrink-0">
+            <Badge key={tagId} variant="secondary" className="shrink-0 font-normal">
               {tag.name}
               <X 
                 className="h-3 w-3 ml-1" 
@@ -119,14 +121,15 @@ export function MobileFilters({
           )
         })}
         {hasDateFilter && (
-          <Badge variant="secondary" className="shrink-0">
-            {format(new Date(searchParams.get('dateFrom')!), 'P', { locale: es })}
-            <X 
-              className="h-3 w-3 ml-1" 
-              onClick={() => updateFilters({ dateFrom: '', dateTo: '' })}
-            />
-          </Badge>
-        )}
+            <Badge variant="secondary" className='font-normal'>
+              {format(new Date(searchParams.get('dateFrom')!), 'P', { locale: es })} -{' '}
+              {format(new Date(searchParams.get('dateTo')!), 'P', { locale: es })}
+              <X 
+                className="h-3 w-3 ml-1 cursor-pointer" 
+                onClick={() => updateFilters({ dateFrom: '', dateTo: '' })}
+              />
+            </Badge>
+          )}
       </div>
     )
   }
@@ -148,7 +151,7 @@ export function MobileFilters({
           />
           <Sheet open={isOpen} onOpenChange={setIsOpen}>
             <SheetTrigger asChild>
-              <Button variant="outline" size="sm" className="relative shrink-0">
+              <Button variant="outline" size="sm" className="relative shrink-0" aria-label='Ver opciones de filtros'>
                 <SlidersHorizontal className="h-4 w-4" />
                 {activeFiltersCount > 0 && (
                   <span className="absolute -top-1 -right-1 h-4 w-4 bg-black text-white rounded-full text-xs flex items-center justify-center">
@@ -157,7 +160,7 @@ export function MobileFilters({
                 )}
               </Button>
             </SheetTrigger>
-            <SheetContent side="bottom" className="h-[90vh] bg-white">
+            <SheetContent side="bottom" className="h-[75vh] bg-white">
               <SheetHeader className="pb-4">
                 <SheetTitle>Filtros</SheetTitle>
               </SheetHeader>
@@ -182,54 +185,6 @@ export function MobileFilters({
                 <div className="space-y-2">
                   <h3 className="text-sm font-medium">Fechas</h3>
                   <QuickDateFilters />
-                  <Popover open={calendarOpen} onOpenChange={setCalendarOpen}>
-                    <PopoverTrigger asChild>
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        className={cn(
-                          'w-full justify-start text-left font-normal',
-                          !date && 'text-muted-foreground'
-                        )}
-                      >
-                        <CalendarIcon className="mr-2 h-4 w-4" />
-                        {date?.from ? (
-                          date.to ? (
-                            <>
-                              {format(date.from, 'P', { locale: es })} -{' '}
-                              {format(date.to, 'P', { locale: es })}
-                            </>
-                          ) : (
-                            format(date.from, 'P', { locale: es })
-                          )
-                        ) : (
-                          'Seleccionar fechas'
-                        )}
-                      </Button>
-                    </PopoverTrigger>
-                    <PopoverContent className="w-auto p-0 bg-white" align="start">
-                      <Calendar
-                        initialFocus
-                        mode="range"
-                        defaultMonth={date?.from}
-                        selected={date}
-                        onSelect={(newDate) => {
-                          setDate(newDate)
-                          if (newDate?.from) {
-                            updateFilters({
-                              dateFrom: newDate.from.toISOString(),
-                              dateTo: newDate.to ? newDate.to.toISOString() : newDate.from.toISOString(),
-                            })
-                          } else {
-                            updateFilters({ dateFrom: '', dateTo: '' })
-                          }
-                          setCalendarOpen(false)
-                        }}
-                        numberOfMonths={1}
-                        locale={es}
-                      />
-                    </PopoverContent>
-                  </Popover>
                 </div>
 
                 <div className="space-y-2">
@@ -241,6 +196,7 @@ export function MobileFilters({
                         <Button
                           key={tag.id}
                           variant={isSelected ? 'default' : 'outline'}
+                          className={isSelected ? 'bg-black text-white' : ''}
                           size="sm"
                           onClick={() => {
                             const currentTags = new Set(selectedTags)
