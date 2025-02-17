@@ -3,7 +3,7 @@ import { notFound } from 'next/navigation'
 import { getPayload } from 'payload'
 import configPromise from '@payload-config'
 import { Metadata } from 'next'
-import { Concert } from '@/payload-types'
+import { Artist, Concert } from '@/payload-types'
 import ConcertView from './view'
 import { formatDate } from '@/app/lib/utils'
 
@@ -136,23 +136,58 @@ export default async function ConcertPage({
     notFound();
   }
 
-  console.log('concert.date', concert.startDate);
-
   // Get setlists for each artist and enhance the concert object
   const enhancedArtists = await Promise.all(
-    (concert.artists || []).map(async (artist: any) => {
-      const setlistData = await getSetlist(artist.id)
-      return {
-        ...artist,
-        setlist: setlistData.docs[0] || null,
+    (concert.artists || []).map(async (value: string | Artist) => {
+      if (typeof value === 'string') {
+        return value; // Keep as string if it's a string
       }
+      const setlistData = await getSetlist(value.id)
+      return {
+        ...value,
+        setlist: setlistData.docs[0] || null,
+      } as Artist // Assert as Artist type
     }),
   )
 
-  concert.artists = enhancedArtists
+  
+  concert.artists = enhancedArtists as (string | Artist)[]
 
   const formattedDate = formatDate(concert.startDate);
-  console.log('concert.date', concert.startDate);
 
-  return <ConcertView concert={concert} formattedDate={formattedDate} />;
+  return <div>
+            <script
+              type="application/ld+json"
+              dangerouslySetInnerHTML={{
+                __html: JSON.stringify({
+                  '@context': 'https://schema.org',
+                  '@type': 'Event',
+                  name: concert.title,
+                  startDate: concert.startDate,
+                  endDate: concert.endDate || concert.startDate,
+                  image: typeof concert.poster === 'string' ? concert.poster : concert.poster?.url,
+                  performer: concert.artists?.map((artist: string | Artist) => ({
+                    '@type': 'PerformingGroup',
+                    name: typeof artist === 'string' ? artist : artist.name,
+                  })),
+                  location: {
+                    '@type': 'Place', 
+                    name: typeof concert.venue === 'string' ? concert.venue : concert.venue?.name,
+                    address: {
+                      '@type': 'PostalAddress',
+                      streetAddress: typeof concert.venue === 'string' ? '' : concert.venue?.address,
+                    },
+                  },
+                  offers: concert.ticketsLink
+                    ? {
+                        '@type': 'Offer',
+                        url: concert.ticketsLink,
+                        availability: 'https://schema.org/InStock',
+                      }
+                    : undefined,
+                }),
+              }}
+            />
+      <ConcertView concert={concert} formattedDate={formattedDate} />
+    </div>;
 }
