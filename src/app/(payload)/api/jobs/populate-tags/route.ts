@@ -6,6 +6,7 @@ import configPromise from '@payload-config'
 const payload = await getPayload({ config: configPromise })
 
 import { add } from 'date-fns'
+import { validateApiKey } from '@/app/utils'
 
 interface SpotifySearchResult {
   artists: {
@@ -96,8 +97,17 @@ async function findOrCreateTag(genreName: string) {
   return newTag.id
 }
 
-export async function POST() {
+export async function POST(request: Request) {
   try {
+    if (!validateApiKey(request)) {
+      return NextResponse.json(
+        {
+          success: false,
+          error: 'Unauthorized access',
+        },
+        { status: 401 },
+      )
+    }
     // Obtener token de Spotify
     const spotifyToken = await getSpotifyToken()
 

@@ -2,6 +2,7 @@
 import { NextResponse } from 'next/server'
 import { getPayload } from 'payload'
 import configPromise from '@payload-config'
+import { validateApiKey } from '@/app/utils'
 
 const payload = await getPayload({ config: configPromise })
 
@@ -123,8 +124,17 @@ async function createSetlist(artistId: string, artistName: string, songs: string
   })
 }
 
-export async function POST() {
+export async function POST(request: Request) {
   try {
+    if (!validateApiKey(request)) {
+      return NextResponse.json(
+        {
+          success: false,
+          error: 'Unauthorized access',
+        },
+        { status: 401 },
+      )
+    }
     // Get artists without setlists
     const artists = await payload.find({
       collection: 'artists',
