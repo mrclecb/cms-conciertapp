@@ -1,5 +1,5 @@
 // types.ts
-import { Concert, Media, Venue } from '@/payload-types';
+import { Concert } from '@/payload-types';
 
 export interface Tag {
   id: string;

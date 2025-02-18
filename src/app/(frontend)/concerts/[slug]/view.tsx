@@ -1,7 +1,7 @@
 'use client'
 import React from 'react';
 import { Card, CardContent } from '@/components/ui/card';
-import { ChevronRight, CalendarDays, MapPin } from 'lucide-react';
+import { ChevronRight, CalendarDays, MapPin, Ticket } from 'lucide-react';
 import Link from 'next/link';
 import FadeImage from '@/app/components/ui/fade-image';
 import { ConcertViewProps } from './types';
@@ -11,8 +11,6 @@ import DynamicArtistGrid from '@/app/components/artists/dynamic-artist-grid';
 import VenueInfoTabs from '@/app/components/concerts/concert-venue-tabs';
 
 const ConcertView: React.FC<ConcertViewProps> = ({ concert, formattedDate }) => {
-
-
     const populatedArtists = concert?.artists?.filter((artist): artist is Artist => 
         typeof artist !== 'string'
       ) || [];
@@ -25,13 +23,35 @@ const ConcertView: React.FC<ConcertViewProps> = ({ concert, formattedDate }) => 
 
   const getVenueName = (venue: string | Venue): string => {
     if (typeof venue === 'string') return venue;
-    return venue.name;
+    return venue.name || '';
   };
-  
-  const venueInfo = {
+
+  const getVenueAddress = (venue: string | Venue): string => {
+    if (typeof venue === 'string') return venue;
+    return venue.address || ''; 
+  };
+
+  const getVenueImageUrl = (venue: string | Venue): string => {
+    if (typeof venue === 'string') {
+      return '';
+    }
+    if (typeof venue.images?.[0]?.image === 'string') {
+      return '';
+    }
+    return venue.images?.[0]?.image?.url || '';
+  }
+
+
+  const venueSection = {
+    name: getVenueName(concert.venue),
+    address: getVenueAddress(concert.venue),
+    imageUrl: getVenueImageUrl(concert.venue)
+  }
+  const info = {
     schedule: concert.schedule || null,
     venueMaps: concert.venueMaps || null,
     additionalInfo: concert.additionalInfo || null,
+    venue: venueSection,
   };
 
 
@@ -57,21 +77,41 @@ const ConcertView: React.FC<ConcertViewProps> = ({ concert, formattedDate }) => 
 
       {/* Concert Header */}
       <div className="mb-8">
-        <h1 className="text-4xl font-bold mb-4">{concert.title}</h1>
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-4">
+    <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold">{concert.title}</h1>
+    <div className="flex gap-2 w-full sm:w-auto">
+      {concert?.ticketsLink && (
+        <a
+          href={concert?.ticketsLink || '#'}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="flex items-center justify-center gap-2 bg-black hover:bg-gray-800 text-white font-medium py-2 sm:py-3 px-4 sm:px-6 rounded-lg transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl border-2 border-gray-700 hover:border-white w-full sm:w-auto text-sm sm:text-base"
+        >
+          <Ticket className="w-4 h-4 sm:w-5 sm:h-5" />
+          <span>Comprar tickets</span>
+        </a>
+      )}
+    </div>
+  </div>
         <div className="flex flex-col gap-2 text-muted-foreground">
           <div className="flex items-center gap-2">
-            <CalendarDays className="w-4 h-4" aria-hidden="true" />
-            <time dateTime={concert.startDate}>{formattedDate}</time>
+            <CalendarDays className="w-4 h-4" />
+            <span>{formattedDate}</span>
           </div>
           <div className="flex items-center gap-2">
-            <MapPin className="w-4 h-4" aria-hidden="true" />
-            <address className="not-italic">{getVenueName(concert.venue)}</address>
+            <MapPin className="w-4 h-4" />
+            <span>{getVenueAddress(concert.venue)}</span>
           </div>
         </div>
       </div>
 
       {/* Main Content Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        {/* Info Tabs */}
+        <div className="">
+            <VenueInfoTabs info={info} />
+        </div>
+
         {/* Poster and Venue Info */}
         <div className="space-y-8">
           {concert.poster && (
@@ -91,11 +131,6 @@ const ConcertView: React.FC<ConcertViewProps> = ({ concert, formattedDate }) => 
 
         {/* Artists Grid with Dynamic Setlist */}
          <DynamicArtistGrid artists={populatedArtists} />
-
-         {/* Venue Info Tabs */}
-        <div className="">
-            <VenueInfoTabs info={venueInfo} />
-        </div>
       </div>
     </main>
   );
