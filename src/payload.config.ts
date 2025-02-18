@@ -33,6 +33,11 @@ export default buildConfig({
     url: process.env.DATABASE_URI || '',
   }),
   sharp,
+  upload: {
+    limits: {
+      fileSize: 5000000, // 5MB, written in bytes
+    },
+  },
   plugins: [
     // storage-adapter-placeholder
   ],
