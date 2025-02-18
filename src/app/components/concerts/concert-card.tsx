@@ -1,11 +1,8 @@
 import React from 'react';
 import Link from 'next/link';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 import { Calendar, MapPin, Users } from 'lucide-react';
 
-type MediaType = {
-  url: string;
-};
 
 type ArtistType = {
   name: string;
@@ -49,7 +46,7 @@ export function OverlayCard({ title, date, venue, artists, slug, poster }: Conce
           <div className="space-y-1">
             <p className="text-sm text-gray-300">{date}</p>
             <p className="font-medium text-gray-200">{venue}</p>
-            <p className="text-sm text-gray-300">{artists.map(a => a.name).join(', ')}</p>
+            <span className="text-sm">{artists.map(a => a.name).slice(0,9).join(', ')} {artists.length > 10 ? 'y mas' : ''} </span>
           </div>
         </div>
       </div>
@@ -94,7 +91,7 @@ export function ArtistImageCard({ title, date, venue, artists, slug }: ConcertCa
             </div>
             <div className="flex items-center text-muted-foreground">
               <Users className="w-4 h-4 mr-2" />
-              <span className="text-sm">{artists.map(a => a.name).join(', ')}</span>
+              <span className="text-sm">{artists.map(a => a.name).slice(0,9).join(', ')} {artists.length > 10 ? 'y mas' : ''} </span>
             </div>
           </div>
         </div>
@@ -116,7 +113,7 @@ export function MinimalCard({ title, date, venue, artists, slug }: ConcertCardPr
         <div className="space-y-2 text-sm text-muted-foreground">
           <p>{date}</p>
           <p className="font-medium text-foreground">{venue}</p>
-          <p>{artists.map(a => a.name).join(', ')}</p>
+          <p>{artists.map(a => a.name).slice(0,9).join(', ')} {artists.length > 10 ? 'y mas' : ''}</p>
         </div>
       </CardContent>
     </Card>
