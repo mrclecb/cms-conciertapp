@@ -6,7 +6,7 @@ export async function GET() {
 Disallow: /admin/
 Allow: /
 
-Sitemap: 'http://conciert.app/sitemap.xml`;
+Sitemap: http://conciert.app/sitemap.xml`;
 
   return new NextResponse(robots, {
     headers: {
