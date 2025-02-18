@@ -1,3 +1,6 @@
+export const dynamic = "force-dynamic";
+export const fetchCache = "force-no-store";
+
 import { Suspense } from 'react'
 import { ConcertCard } from '../components/concerts/concert-card'
 import { ConcertCardSkeleton } from '../components/concerts/concert-card-skeleton'
