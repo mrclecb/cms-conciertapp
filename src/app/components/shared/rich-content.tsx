@@ -1,5 +1,6 @@
 import { Card, CardContent } from "@/components/ui/card";
 import ImageGallery, { ImageItem } from "./image-gallery";
+import { RichText } from '@payloadcms/richtext-lexical/react'
 
 // Tipo para el RichText de Payload
 export interface RichTextNode {
@@ -37,8 +38,9 @@ export interface RichTextNode {
     if (!hasContent) return null;
   
     return (
-
+  
           <div className="space-y-6">
+            
             {content.images && content.images.length > 0 && (
               <ImageGallery
                 images={content.images.filter((item): item is Required<ImageItem> => 
@@ -46,14 +48,11 @@ export interface RichTextNode {
                 )} 
               />
             )}
+
+{content.description && (
+              <RichText data={content.description} />
+            )}    
           </div>
+
     );
-  };
-  
-  // Función auxiliar para serializar el RichText
-  const serializeRichText = (content: RichTextContent): string => {
-    // Aquí deberías implementar la lógica para convertir el contenido
-    // del RichText a HTML. Puedes usar la función que proporciona Payload
-    // o implementar tu propia lógica de serialización
-    return ''; // Implementa la serialización adecuada
   };
