@@ -50,7 +50,7 @@ const ImageGallery: React.FC<ImageGalleryProps> = ({ images, title }) => {
       </div>
 
       <Dialog open={selectedImage !== null} onOpenChange={() => setSelectedImage(null)}>
-        <DialogTitle className='text-xs'>Ver imagenes</DialogTitle>
+        <DialogTitle className='text-xs' style={{display: 'none'}}>Ver imagenes</DialogTitle>
         <DialogContent className="max-w-4xl p-0">
           <div className="relative h-[80vh]">
             {selectedImage !== null && (
@@ -67,20 +67,20 @@ const ImageGallery: React.FC<ImageGalleryProps> = ({ images, title }) => {
             >
               <X className="w-5 h-5" />
             </button>
-            <button
+            {images.length > 1 && <button
               onClick={handlePrevious}
               className="absolute left-4 top-1/2 -translate-y-1/2 p-2 rounded-full bg-black/50 hover:bg-black/70 text-white"
               aria-label="Anterior"
             >
               <ChevronLeft className="w-5 h-5" />
-            </button>
-            <button
+            </button>}
+            {images.length > 1 && <button
               onClick={handleNext}
               className="absolute right-4 top-1/2 -translate-y-1/2 p-2 rounded-full bg-black/50 hover:bg-black/70 text-white"
               aria-label="Siguiente"
             >
               <ChevronRight className="w-5 h-5" />
-            </button>
+            </button>}
           </div>
         </DialogContent>
       </Dialog>

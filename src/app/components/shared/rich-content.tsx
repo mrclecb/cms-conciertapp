@@ -37,27 +37,16 @@ export interface RichTextNode {
     if (!hasContent) return null;
   
     return (
-      <Card>
-        <CardContent className="pt-6">
+
           <div className="space-y-6">
-            {content.description && (
-              <div 
-                className="prose prose-sm max-w-none dark:prose-invert"
-                dangerouslySetInnerHTML={{ 
-                  __html: serializeRichText(content.description) 
-                }}
-              />
-            )}
             {content.images && content.images.length > 0 && (
-              <ImageGallery 
+              <ImageGallery
                 images={content.images.filter((item): item is Required<ImageItem> => 
                   item.image !== null
                 )} 
               />
             )}
           </div>
-        </CardContent>
-      </Card>
     );
   };
   

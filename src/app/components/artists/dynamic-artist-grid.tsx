@@ -52,15 +52,7 @@ const DynamicArtistGrid: React.FC<ArtistGridProps> = ({ artists }) => {
       <div>
         
         
-
-      <div 
-        className="grid grid-cols-3 gap-2 w-full h-fit"
-        role="grid"
-      >
-        {gridItems}
-      </div>
-
-      { isVisible && <Alert className="bg-blue-50 border-blue-100 flex items-center justify-between mt-2">
+      { isVisible && <Alert className="bg-blue-50 border-blue-100 flex items-center justify-between mb-2">
         <div className="flex items-center">
           <Info className="h-4 w-4 text-blue-500 mr-2 flex-shrink-0" />
           <AlertDescription className="text-blue-500 m-0">
@@ -75,6 +67,14 @@ const DynamicArtistGrid: React.FC<ArtistGridProps> = ({ artists }) => {
           <X className="h-4 w-4" />
         </button>
       </Alert>}
+
+      <div 
+        className="grid grid-cols-3 gap-2 w-full h-fit"
+        role="grid"
+      >
+        {gridItems}
+      </div>
+
       </div>
       
     );
