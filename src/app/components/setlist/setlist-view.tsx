@@ -12,7 +12,7 @@ const SetlistView: React.FC<{
       <div className="col-span-3 transition-all">
         <Card className="mt-2">
           <CardHeader className="flex flex-row items-center justify-between">
-            <CardTitle className="text-xl">{artist.name} - Setlist probable</CardTitle>
+            <CardTitle className="text-sm font-normal">{artist.name} - Setlist</CardTitle>
             <button
               onClick={onClose}
               className="p-2 hover:bg-secondary rounded-full transition-colors"

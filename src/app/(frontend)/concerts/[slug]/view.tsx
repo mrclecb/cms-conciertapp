@@ -100,7 +100,7 @@ const ConcertView: React.FC<ConcertViewProps> = ({ concert, formattedDate }) => 
           </div>
           <div className="flex items-center gap-2">
             <MapPin className="w-4 h-4" />
-            <span>{getVenueAddress(concert.venue)}</span>
+            <span>{getVenueName(concert.venue)}</span>
           </div>
         </div>
       </div>

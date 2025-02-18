@@ -23,6 +23,26 @@ export const Setlists: CollectionConfig = {
         name: 'setlist',
         type: 'json',
         required: true,
+    },
+    {
+        name: 'setlistFmId',
+        type: 'text',
+        required: false,
+    },
+    {
+      name: 'setlistFmName',
+      type: 'text',
+      required: false,
+    },
+    {
+      name: 'playlistId',
+      type: 'text',
+      required: false,
+    },
+    {
+      name: 'playlistLinkToShare',
+      type: 'text',
+      required: false,
     }
   ]
 }

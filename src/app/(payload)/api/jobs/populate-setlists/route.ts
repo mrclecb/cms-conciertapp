@@ -7,10 +7,15 @@ import { validateApiKey } from '@/app/utils'
 const payload = await getPayload({ config: configPromise })
 
 interface LastFmSetlist {
+  id: string,
   artist: string
+  eventDate:string,
   venue: {
     name: string
     id: string
+  }
+  tour?: {
+    name: string
   }
   sets: {
     set: Array<{
@@ -25,11 +30,75 @@ interface LastFmResponse {
   setlist: LastFmSetlist[]
 }
 
-async function getLastFmSetlist(artistName: string): Promise<string[] | null> {
+async function getLastFmSetlist(
+  artistName: string
+): Promise<{ songs: string[]; setlistFmId: string; setlistFmName: string } | null> {
   try {
     const apiKey = process.env.SETLIST_FM_API_KEY
     const encodedName = encodeURIComponent(artistName.trim())
+    
+    // Modificación: Vamos a intentar con hasta 5 páginas para encontrar un setlist adecuado
+    for (let page = 1; page <= 5; page++) {
+      const response = await fetch(
+        `https://api.setlist.fm/rest/1.0/search/setlists?artistName=${encodedName}&p=${page}`,
+        {
+          headers: {
+            Accept: 'application/json',
+            'x-api-key': apiKey as string,
+          },
+        },
+      )
 
+      if (!response.ok) {
+        throw new Error(`Error fetching setlist: ${response.statusText}`)
+      }
+
+      const data: LastFmResponse = await response.json()
+
+      // Si no hay setlists en esta página, terminamos la búsqueda
+      if (!data.setlist || data.setlist.length === 0) {
+        break
+      }
+
+      // Procesar setlists en orden cronológico (más recientes primero, ya que así vienen por defecto)
+      for (const setlist of data.setlist) {
+        const songs: string[] = []
+
+        // Extraer canciones de todos los sets
+        if (setlist.sets && setlist.sets.set) {
+          setlist.sets.set.forEach((set) => {
+            if (set.song && Array.isArray(set.song)) {
+              set.song.forEach((song) => {
+                if (song.name && song.name.trim()) {
+                  songs.push(song.name.trim())
+                }
+              })
+            }
+          })
+        }
+
+        // Si encontramos un setlist con al menos 4 canciones, lo usamos
+        if (songs.length >= 4) {
+          // Crear un nombre representativo para el setlist
+          const venue = setlist.venue?.name || 'Desconocido'
+          const eventDate = setlist.eventDate || 'Fecha desconocida'
+          const tour = setlist.tour?.name ? ` (${setlist.tour.name})` : ''
+          const setlistFmName = `${venue}, ${eventDate}${tour}`
+          
+          return {
+            songs,
+            setlistFmId: setlist.id || '',
+            setlistFmName
+          }
+        }
+      }
+      
+      // Si hemos llegado aquí, ningún setlist en esta página tenía 4+ canciones
+      // Continuamos con la siguiente página para buscar setlists más antiguos
+    }
+
+    // Si hemos explorado todas las páginas y no encontramos ningún setlist adecuado,
+    // hacemos una última pasada para encontrar el mejor setlist disponible
     const response = await fetch(
       `https://api.setlist.fm/rest/1.0/search/setlists?artistName=${encodedName}&p=1`,
       {
@@ -45,14 +114,17 @@ async function getLastFmSetlist(artistName: string): Promise<string[] | null> {
     }
 
     const data: LastFmResponse = await response.json()
-
-    // Look through all setlists to find one with enough songs
-    let bestSetlist: string[] = []
+    
+    // Buscar el setlist con más canciones, incluso si tiene menos de 4
+    let bestSetlist: {
+      songs: string[];
+      setlistFmId: string;
+      setlistFmName: string;
+    } | null = null;
 
     for (const setlist of data.setlist) {
       const songs: string[] = []
 
-      // Extract songs from all sets
       if (setlist.sets && setlist.sets.set) {
         setlist.sets.set.forEach((set) => {
           if (set.song && Array.isArray(set.song)) {
@@ -65,19 +137,22 @@ async function getLastFmSetlist(artistName: string): Promise<string[] | null> {
         })
       }
 
-      // Keep track of the setlist with the most songs
-      if (songs.length > bestSetlist.length) {
-        bestSetlist = songs
-      }
-
-      // If we found a setlist with at least 2 songs, use it
-      if (songs.length >= 2) {
-        return songs
+      if (!bestSetlist || songs.length > bestSetlist.songs.length) {
+        // Crear un nombre representativo para el setlist
+        const venue = setlist.venue?.name || 'Desconocido'
+        const eventDate = setlist.eventDate || 'Fecha desconocida'
+        const tour = setlist.tour?.name ? ` (${setlist.tour.name})` : ''
+        const setlistFmName = `${venue}, ${eventDate}${tour}`
+        
+        bestSetlist = {
+          songs,
+          setlistFmId: setlist.id || '',
+          setlistFmName
+        }
       }
     }
 
-    // If we didn't find any setlist with 2+ songs but found some songs, return the best one
-    if (bestSetlist.length > 0) {
+    if (bestSetlist && bestSetlist.songs.length > 0) {
       return bestSetlist
     }
 
@@ -101,7 +176,7 @@ async function findExistingSetlist(artistId: string): Promise<boolean> {
   return existingSetlist.docs.length > 0
 }
 
-async function createSetlist(artistId: string, artistName: string, songs: string[]) {
+async function createSetlist(artistId: string, artistName: string, songs: string[], setlistFmId?: string, setlistFmName?: string) {
   // Validar que tengamos canciones y sean un array
   if (!Array.isArray(songs) || songs.length === 0) {
     throw new Error('Setlist must contain at least one song')
@@ -120,6 +195,8 @@ async function createSetlist(artistId: string, artistName: string, songs: string
       name: `${artistName} Setlist`,
       artist: artistId,
       setlist: validSongs,
+      setlistFmId,
+      setlistFmName
     },
   })
 }
@@ -138,7 +215,7 @@ export async function POST(request: Request) {
     // Get artists without setlists
     const artists = await payload.find({
       collection: 'artists',
-      limit: 10000,
+      limit: 320,
     })
 
     const results = []
@@ -154,14 +231,14 @@ export async function POST(request: Request) {
 
           if (songs) {
             // Create new setlist
-            const setlist = await createSetlist(artist.id, artist.name, songs)
+            const setlist = await createSetlist(artist.id, artist.name, songs.songs, songs.setlistFmId, songs.setlistFmName)
 
             results.push({
               artistId: artist.id,
               name: artist.name,
               status: 'success',
               setlistId: setlist.id,
-              songsCount: songs.length,
+              songsCount: songs.songs.length,
             })
           } else {
             results.push({

@@ -1,7 +1,10 @@
+'use client';
 import React, { useState } from 'react';
 import ArtistCard from './artist-card';
 import SetlistView from '../setlist/setlist-view';
 import { Artist } from '@/app/(frontend)/concerts/[slug]/types';
+import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Info, X } from 'lucide-react';
 
 interface ArtistGridProps {
     artists: Artist[];
@@ -9,6 +12,7 @@ interface ArtistGridProps {
   
 const DynamicArtistGrid: React.FC<ArtistGridProps> = ({ artists }) => {
     const [selectedArtist, setSelectedArtist] = useState<Artist | null>(null);
+    const [isVisible, setIsVisible] = useState(true);
   
     // Calculate the grid items with setlist insertion
     const gridItems = React.useMemo(() => {
@@ -45,12 +49,34 @@ const DynamicArtistGrid: React.FC<ArtistGridProps> = ({ artists }) => {
     }, [artists, selectedArtist]);
   
     return (
+      <div>
+        
+        
+
       <div 
         className="grid grid-cols-3 gap-2 w-full h-fit"
         role="grid"
       >
         {gridItems}
       </div>
+
+      { isVisible && <Alert className="bg-blue-50 border-blue-100 flex items-center justify-between mt-2">
+        <div className="flex items-center">
+          <Info className="h-4 w-4 text-blue-500 mr-2 flex-shrink-0" />
+          <AlertDescription className="text-blue-500 m-0">
+            Toca en tu artista favorito para ver su setlist
+          </AlertDescription>
+        </div>
+        <button 
+          onClick={() => setIsVisible(false)}
+          className="text-blue-400 hover:text-blue-600 rounded-full p-1 focus:outline-none focus:ring-2 focus:ring-blue-200"
+          aria-label="Cerrar"
+        >
+          <X className="h-4 w-4" />
+        </button>
+      </Alert>}
+      </div>
+      
     );
   };
   

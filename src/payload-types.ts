@@ -368,6 +368,10 @@ export interface Setlist {
     | number
     | boolean
     | null;
+  setlistFmId?: string | null;
+  setlistFmName?: string | null;
+  playlistId?: string | null;
+  playlistLinkToShare?: string | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -608,6 +612,10 @@ export interface SetlistsSelect<T extends boolean = true> {
   name?: T;
   artist?: T;
   setlist?: T;
+  setlistFmId?: T;
+  setlistFmName?: T;
+  playlistId?: T;
+  playlistLinkToShare?: T;
   updatedAt?: T;
   createdAt?: T;
 }
