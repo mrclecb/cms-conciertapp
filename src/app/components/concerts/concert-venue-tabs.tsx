@@ -96,7 +96,7 @@ const VenueInfoTabs: React.FC<VenueInfoTabsProps> = ({ info }) => {
     const hasAdditionalInfo = additionalInfo?.description || (additionalInfo?.images && additionalInfo.images.length > 0);
     
   
-    if (!hasSchedule && !hasVenueMaps && !hasAdditionalInfo) return null;
+    if (!hasSchedule && !hasVenueMaps && !hasAdditionalInfo && !venue) return null;
   
     return (
       <>
