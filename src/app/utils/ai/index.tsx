@@ -49,7 +49,7 @@ export async function generateSEO(concert: Concert): Promise<ConcertSEO> {
     const prompt =
     `Tienes que esctibir las metaetiquetas para el landing page o la vista única de una entidad tipo concierto o evento musical` + 
     `Los datos del concierto son: Performers: ${artists} la fecha de ${concert.startDate} en ${concert.venue}` + 
-    `Asi como generar esto alrededor de los datos del conciertos, tambien genera keywords para hacer crecer la webapp considerando el valor que agrega de tener toda la info de eventos a la mano incluido el probable setlist de cada artista`
+    `Genera keywords en base acentuando el nombre del evento: ${concert.title} en el lugar: ${concert.venue} y ${concert.title} ${concert.startDate}, tambien genera keywords para hacer crecer la webapp considerando el valor que agrega de tener toda la info de eventos a la mano incluido el probable setlist de cada artista`
 
     const system = 'Eres un experto en SEO y en Copywriting, tienes experiencia en llegar en el uso de keywords al momento de definir meta-tags eficaces a la hora de posicionarse en buscadores.' +
     'Necesitas posicionar tu naciente web app, su nombre es conciert.app o conciertapp y tienes que incentivar el uso de sus features como el acceso rápido a su información y a sus setlist';
