@@ -27,9 +27,6 @@ export const metadata: Metadata = {
     description: 'Descubre todos los conciertos y eventos musicales en Chile',
   },
   keywords: 'conciertos chile, eventos musicales chile, tickets conciertos, agenda musical chile, shows en vivo, entradas conciertos',
-  alternates: {
-    canonical: 'https://conciert.app',
-  },
   robots: {
     index: true,
     follow: true,

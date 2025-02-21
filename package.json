@@ -15,6 +15,7 @@
     "start": "cross-env NODE_OPTIONS=--no-deprecation next start"
   },
   "dependencies": {
+    "@ai-sdk/openai": "^1.1.13",
     "@payloadcms/db-mongodb": "latest",
     "@payloadcms/next": "latest",
     "@payloadcms/payload-cloud": "latest",
@@ -30,6 +31,7 @@
     "@radix-ui/react-toggle-group": "^1.1.2",
     "@tailwindcss/cli": "^4.0.4",
     "@tailwindcss/postcss": "^4.0.4",
+    "ai": "^4.1.44",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "cross-env": "^7.0.3",
@@ -39,6 +41,7 @@
     "lucide-react": "^0.475.0",
     "next": "15.1.5",
     "nprogress": "^0.2.0",
+    "openai": "^4.85.2",
     "payload": "latest",
     "react": "19.0.0",
     "react-day-picker": "^8.10.1",
@@ -47,7 +50,8 @@
     "sharp": "0.32.6",
     "sitemap": "^8.0.0",
     "tailwind-merge": "^3.0.1",
-    "tailwindcss-animate": "^1.0.7"
+    "tailwindcss-animate": "^1.0.7",
+    "zod": "^3.24.2"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3.2.0",

@@ -70,3 +70,9 @@
   background: #000;
   height: 3px;
 }
+
+.payload-richtext {
+  p {
+    margin-bottom: 1rem;
+  }
+}

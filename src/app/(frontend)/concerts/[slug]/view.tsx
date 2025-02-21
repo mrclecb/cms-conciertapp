@@ -1,6 +1,8 @@
 'use client'
-import React from 'react';
+import React, { useState } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+
 import { ChevronRight, CalendarDays, MapPin, Ticket } from 'lucide-react';
 import Link from 'next/link';
 import FadeImage from '@/app/components/ui/fade-image';
@@ -9,6 +11,38 @@ import { Artist, Media, Venue } from '@/payload-types';
 
 import DynamicArtistGrid from '@/app/components/artists/dynamic-artist-grid';
 import VenueInfoTabs from '@/app/components/concerts/concert-venue-tabs';
+import { RichText } from '@payloadcms/richtext-lexical/react';
+
+const GradientText: React.FC<{ text: React.ReactElement, maxHeight?: number }> = ({ text, maxHeight = 200 }) => {
+  const [isExpanded, setIsExpanded] = useState(false);
+
+  return (
+    <div className="relative">
+      <div
+        className={`relative ${
+          !isExpanded
+            ? "max-h-52 overflow-hidden before:absolute before:bottom-0 before:left-0 before:h-24 before:w-full before:bg-gradient-to-t before:from-white before:to-transparent"
+            : ""
+        }`}
+      >
+        <div className="prose max-w-none">
+          {text}
+        </div>
+      </div>
+      
+      <div className="mt-2 text-center">
+        <Button
+          variant="ghost"
+          className="text-blue-600 hover:text-blue-800"
+          onClick={() => setIsExpanded(!isExpanded)}
+        >
+          {isExpanded ? "Ver menos" : "Ver más"}
+        </Button>
+      </div>
+    </div>
+  );
+};
+
 
 const ConcertView: React.FC<ConcertViewProps> = ({ concert, formattedDate }) => {
     const populatedArtists = concert?.artists?.filter((artist): artist is Artist => 
@@ -107,15 +141,15 @@ const ConcertView: React.FC<ConcertViewProps> = ({ concert, formattedDate }) => 
 
       {/* Main Content Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        {/* Info Tabs */}
-        <div className="">
-            <VenueInfoTabs info={info} />
+       
+        <div className='grid col-span-2 gap-8 content-start'>
+        <div>
+          {concert?.additionalInfo?.description && <GradientText maxHeight={200} text={<RichText data={concert.additionalInfo.description} />} />}
         </div>
-
         {/* Poster and Venue Info */}
-        <div className="space-y-8">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
           {concert.poster && (
-            <Card>
+            <Card className='border-none shadow-none'>
               <CardContent className="p-0">
                 <FadeImage
                   src={getPosterUrl(concert.poster)}
@@ -127,11 +161,22 @@ const ConcertView: React.FC<ConcertViewProps> = ({ concert, formattedDate }) => 
               </CardContent>
             </Card>
           )}
+
+          {/* Info Tabs */}
+          <VenueInfoTabs info={info} />
+        </div>
+
+        
+
+         
         </div>
 
         {/* Artists Grid with Dynamic Setlist */}
          <DynamicArtistGrid artists={populatedArtists} />
       </div>
+
+
+      
     </main>
   );
 };

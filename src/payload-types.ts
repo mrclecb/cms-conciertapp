@@ -348,6 +348,75 @@ export interface Concert {
         }[]
       | null;
   };
+  /**
+   * Configuración SEO para este concierto
+   */
+  seo?: {
+    /**
+     * Título optimizado para SEO (55-60 caracteres)
+     */
+    metaTitle?: string | null;
+    /**
+     * Descripción optimizada para SEO (150-160 caracteres)
+     */
+    metaDescription?: string | null;
+    /**
+     * Palabras clave relevantes para este concierto
+     */
+    keywords?:
+      | {
+          keyword?: string | null;
+          id?: string | null;
+        }[]
+      | null;
+    /**
+     * Imagen para compartir en redes sociales (1200x630px recomendado)
+     */
+    ogImage?: (string | null) | Media;
+    /**
+     * Datos estructurados para eventos (Schema.org)
+     */
+    structuredData?: {
+      performerType?: ('Person' | 'MusicGroup' | 'Organization') | null;
+      eventStatus?: ('EventScheduled' | 'EventPostponed' | 'EventRescheduled' | 'EventCancelled') | null;
+      /**
+       * Ej: "$20 - $100"
+       */
+      priceRange?: string | null;
+      availability?: ('InStock' | 'LimitedAvailability' | 'SoldOut' | 'PreSale') | null;
+    };
+    /**
+     * URL canónica si es diferente a la URL por defecto
+     */
+    canonicalUrl?: string | null;
+    /**
+     * Marcar para evitar que este concierto sea indexado por buscadores
+     */
+    noIndex?: boolean | null;
+  };
+  /**
+   * Información para tracking y analytics
+   */
+  trackingInfo?: {
+    /**
+     * Categoría para tracking de eventos
+     */
+    eventCategory?: ('concert' | 'festival' | 'acoustic' | 'release') | null;
+    utmParameters?: {
+      /**
+       * UTM source por defecto para este evento
+       */
+      source?: string | null;
+      /**
+       * UTM medium por defecto para este evento
+       */
+      medium?: string | null;
+      /**
+       * UTM campaign por defecto para este evento
+       */
+      campaign?: string | null;
+    };
+  };
   updatedAt: string;
   createdAt: string;
 }
@@ -599,6 +668,41 @@ export interface ConcertsSelect<T extends boolean = true> {
           | {
               image?: T;
               id?: T;
+            };
+      };
+  seo?:
+    | T
+    | {
+        metaTitle?: T;
+        metaDescription?: T;
+        keywords?:
+          | T
+          | {
+              keyword?: T;
+              id?: T;
+            };
+        ogImage?: T;
+        structuredData?:
+          | T
+          | {
+              performerType?: T;
+              eventStatus?: T;
+              priceRange?: T;
+              availability?: T;
+            };
+        canonicalUrl?: T;
+        noIndex?: T;
+      };
+  trackingInfo?:
+    | T
+    | {
+        eventCategory?: T;
+        utmParameters?:
+          | T
+          | {
+              source?: T;
+              medium?: T;
+              campaign?: T;
             };
       };
   updatedAt?: T;

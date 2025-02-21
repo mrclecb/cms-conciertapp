@@ -40,7 +40,6 @@ export interface RichTextNode {
     return (
   
           <div className="space-y-6">
-            
             {content.images && content.images.length > 0 && (
               <ImageGallery
                 images={content.images.filter((item): item is Required<ImageItem> => 
@@ -49,7 +48,7 @@ export interface RichTextNode {
               />
             )}
 
-{content.description && (
+            {content.description && (
               <RichText data={content.description} />
             )}    
           </div>

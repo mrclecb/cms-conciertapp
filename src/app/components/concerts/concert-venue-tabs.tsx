@@ -101,9 +101,7 @@ const VenueInfoTabs: React.FC<VenueInfoTabsProps> = ({ info }) => {
 
   // Determinar el tab activo inicial basado en la disponibilidad
   useEffect(() => {
-    if (hasAdditionalInfo) {
-      setActiveTab("info");
-    } else if (hasVenueMaps) {
+     if (hasVenueMaps) {
       setActiveTab("maps");
     } else if (hasSchedule) {
       setActiveTab("schedule");
@@ -178,17 +176,6 @@ const VenueInfoTabs: React.FC<VenueInfoTabsProps> = ({ info }) => {
         className="w-full"
       >
         <TabsList className={`w-full ${isMobile ? 'grid-cols-3' : ''} grid ${isMobile ? 'gap-1' : 'gap-2'} rounded-xl bg-muted p-1 md:w-auto md:flex md:justify-start`}>
-        {hasAdditionalInfo && (
-            <TabsTrigger 
-              value="info" 
-              className={`flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium transition-all
-                ${activeTab === 'info' ? 'bg-background text-primary shadow-sm' : 'text-muted-foreground hover:bg-gray-100 hover:text-primary'}`}
-              onClick={() => setActiveTab("info")}
-            >
-              <Info className={`h-4 w-4 ${isMobile ? 'mx-auto' : ''}`} />
-              {!isMobile && "Info del evento"}
-            </TabsTrigger>
-          )}
 
           {hasSchedule && (
             <TabsTrigger 
@@ -255,24 +242,7 @@ const VenueInfoTabs: React.FC<VenueInfoTabsProps> = ({ info }) => {
             </TabsContent>
           )}
 
-          {hasAdditionalInfo && (
-            <TabsContent value="info" className="animate-in fade-in-50 duration-300">
-              <Card className="border border-gray-200 shadow-sm">
-                <CardHeader className="pb-2">
-                  <CardTitle className="text-xl font-semibold flex items-center gap-2">
-                    <Info className="h-5 w-5 text-primary" />
-                    Información del evento
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <RichContentSection 
-                    content={additionalInfo} 
-                    title=''
-                  />
-                </CardContent>
-              </Card>
-            </TabsContent>
-          )}
+      
         </div>
       </Tabs>
 

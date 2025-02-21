@@ -78,49 +78,24 @@ export async function generateMetadata({
     }
   }
 
-  const artistNames = concert.artists?.map((artist: any) => artist.name).join(', ')
-  const venueName = typeof concert.venue === 'string' ? concert.venue : concert.venue?.name
-  const formattedDate = new Date(concert?.startDate).toLocaleDateString('es-ES', {
-    weekday: 'long',
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric',
-  })
-
-  const description = `Concierto de ${artistNames} en ${venueName} el ${formattedDate}.`
-
   return {
-    title: `${concert.title} | Conciertos`,
-    description,
-    keywords: [
-      ...(concert.artists?.map((artist: any) => artist.name) || []),
-      venueName,
-      'concierto',
-      'música en vivo',
-      ...(concert.tags?.map((tag: any) => tag.name) || []),
-    ].join(', '),
+    title: concert.seo?.metaTitle,
+    description: concert.seo?.metaDescription,
+    keywords: concert.seo?.keywords?.map((keyword) => keyword.keyword).join(', ') || '',
     openGraph: {
       title: concert.title,
-      description,
+      description: concert.seo?.metaDescription || '',
       url: `${process.env.NEXT_PUBLIC_SITE_URL}/concerts/${slug}`,
-      images: [
-        {
-          url: typeof concert.poster === 'string' ? concert.poster : concert.poster?.url || '',
-          width: 800,
-          height: 600,
-          alt: concert.title,
-        },
-      ],
+      images: concert.seo?.ogImage && typeof concert.seo.ogImage !== 'string' && concert.seo.ogImage.url ? [
+        concert.seo.ogImage.url
+      ] : [],
     },
     twitter: {
       card: 'summary_large_image',
       title: concert.title,
-      description,
+      description: concert.seo?.metaDescription || '',
       images: [typeof concert.poster === 'string' ? concert.poster : concert.poster?.url || ''],
-    },
-    alternates: {
-      canonical: `${process.env.NEXT_PUBLIC_SITE_URL}/concerts/${slug}`,
-    },
+    }
   }
 }
 
