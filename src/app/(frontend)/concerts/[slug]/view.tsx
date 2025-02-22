@@ -112,21 +112,21 @@ const ConcertView: React.FC<ConcertViewProps> = ({ concert, formattedDate }) => 
       {/* Concert Header */}
       <div className="mb-8">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-4">
-    <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold">{concert.title}</h1>
-    <div className="flex gap-2 w-full sm:w-auto">
-      {concert?.ticketsLink && (
-        <a
-          href={concert?.ticketsLink || '#'}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="flex items-center justify-center gap-2 bg-black hover:bg-gray-800 text-white font-medium py-2 sm:py-3 px-4 sm:px-6 rounded-lg transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl border-2 border-gray-700 hover:border-white w-full sm:w-auto text-sm sm:text-base"
-        >
-          <Ticket className="w-4 h-4 sm:w-5 sm:h-5" />
-          <span>Comprar tickets</span>
-        </a>
-      )}
-    </div>
-  </div>
+        <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold">{concert.title}</h1>
+        <div className="flex gap-2 w-full sm:w-auto">
+          {concert?.ticketsLink && (
+            <a
+              href={concert?.ticketsLink || '#'}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center justify-center gap-2 bg-black hover:bg-gray-800 text-white font-medium py-2 sm:py-3 px-4 sm:px-6 rounded-lg transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl border-2 border-gray-700 hover:border-white w-full sm:w-auto text-sm sm:text-base"
+            >
+              <Ticket className="w-4 h-4 sm:w-5 sm:h-5" />
+              <span>Comprar tickets</span>
+            </a>
+          )}
+        </div>
+      </div>
         <div className="flex flex-col gap-2 text-muted-foreground">
           <div className="flex items-center gap-2">
             <CalendarDays className="w-4 h-4" />
@@ -139,16 +139,22 @@ const ConcertView: React.FC<ConcertViewProps> = ({ concert, formattedDate }) => 
         </div>
       </div>
 
-      {/* Main Content Grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-       
+      { concert?.artists && concert.artists.length < 6 ?
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-x-0 lg:gap-8">
         <div className='grid col-span-2 gap-8 content-start'>
         <div>
-          {concert?.additionalInfo?.description && <GradientText maxHeight={200} text={<RichText data={concert.additionalInfo.description} />} />}
+          {concert?.additionalInfo?.description && <GradientText maxHeight={400} text={<RichText data={concert.additionalInfo.description} />} />}
         </div>
         {/* Poster and Venue Info */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-          {concert.poster && (
+        </div>
+        </div>
+        <div className='grid col-span-1 gap-8 content-start'>
+          
+          {/* Artists Grid with Dynamic Setlist */}
+         <DynamicArtistGrid artists={populatedArtists} />
+
+         {concert.poster && (
             <Card className='border-none shadow-none'>
               <CardContent className="p-0">
                 <FadeImage
@@ -162,21 +168,46 @@ const ConcertView: React.FC<ConcertViewProps> = ({ concert, formattedDate }) => 
             </Card>
           )}
 
+
           {/* Info Tabs */}
           <VenueInfoTabs info={info} />
         </div>
-
-        
-
-         
-        </div>
-
-        {/* Artists Grid with Dynamic Setlist */}
-         <DynamicArtistGrid artists={populatedArtists} />
       </div>
 
+      : <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+       
+      <div className='grid col-span-2 gap-8 content-start'>
+      <div>
+        {concert?.additionalInfo?.description && <GradientText maxHeight={200} text={<RichText data={concert.additionalInfo.description} />} />}
+      </div>
+      {/* Poster and Venue Info */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        {concert.poster && (
+          <Card className='border-none shadow-none'>
+            <CardContent className="p-0">
+              <FadeImage
+                src={getPosterUrl(concert.poster)}
+                alt={`Poster for ${concert.title}`}
+                width={800}
+                height={600}
+                className="w-full h-full object-cover rounded-lg"
+              />
+            </CardContent>
+          </Card>
+        )}
+
+        {/* Info Tabs */}
+        <VenueInfoTabs info={info} />
+      </div>
 
       
+
+       
+      </div>
+
+      {/* Artists Grid with Dynamic Setlist */}
+       <DynamicArtistGrid artists={populatedArtists} />
+    </div>}
     </main>
   );
 };
