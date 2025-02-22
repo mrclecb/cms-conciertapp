@@ -4,7 +4,7 @@ import { getPayload } from 'payload'
 import configPromise from '@payload-config'
 import { validateApiKey } from '@/app/utils'
 import { generateInfo } from '@/app/utils/ai'
-import { textToPayloadRichText } from '../populate-info-single/route'
+import { textToPayloadRichText } from '../../../../lib/utils'
 
 const payload = await getPayload({ config: configPromise })
 
