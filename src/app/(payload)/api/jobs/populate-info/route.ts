@@ -4,7 +4,7 @@ import { getPayload } from 'payload'
 import configPromise from '@payload-config'
 import { validateApiKey } from '@/app/utils'
 import { generateInfo } from '@/app/utils/ai'
-import { Artist } from '@/payload-types'
+import { textToPayloadRichText } from '../populate-info-single/route'
 
 const payload = await getPayload({ config: configPromise })
 
@@ -19,44 +19,67 @@ export async function POST(request: Request) {
         { status: 401 }
       )
     }
-
-    // Obtener datos del body
-    const body = await request.json()
-    const { concertId } = body
-
-    if (!concertId) {
-      return NextResponse.json(
-        {
-          success: false,
-          error: 'Se requiere el ID del concert',
-        },
-        { status: 400 }
-      )
-    }
-
-    const concert = await payload.findByID({
-      collection: 'concerts',
-      id: concertId,
-    })
-    const venueName = typeof concert.venue === 'string' ? concert.venue : concert.venue?.name || '';
-    const artists = concert.artists?.map((artist: any) => artist.name).join(', ') || ''; 
-    const info = await generateInfo(concert.title, concert.startDate, venueName, artists);
     
-
-    await payload.update({
+    const concerts = await payload.find({
       collection: 'concerts',
-      id: concert.id,
-      data: {
-        additionalInfo: {
-          description: textToPayloadRichText(info),
-        }
-      },
+      limit: 50,
+      depth: 2,
+      where: {
+        or: [
+          {
+            'additionalInfo.description': {
+              in: [null, []]
+            }
+          },
+          {
+            additionalInfo: {
+              in: [null, {}]
+            }
+          }
+        ]
+      }
     })
+    console.log(concerts, 'concerts')
+
+    const results = []
+
+    // Process each artist
+    for (const concert of concerts.docs) {
+      try {
+        
+        const venueName = typeof concert.venue === 'string' ? '' : concert.venue?.name || '';
+          const artists = concert.artists?.map((artist: any) => artist.name).join(', ') || ''; 
+          const info = await generateInfo(concert.title, concert.startDate, venueName, artists);
+          
+      
+          await payload.update({
+            collection: 'concerts',
+            id: concert.id,
+            data: {
+              additionalInfo: {
+                description: textToPayloadRichText(info),
+              }
+            },
+          })
+
+        results.push({
+          concertId: concert.id,
+          status: 'success',
+        })
+        
+      } catch (error) {
+        results.push({
+          concertId: concert.id,
+          status: 'error',
+          error: error instanceof Error ? error.message : 'Unknown error',
+        })
+      }
+    } 
 
     return NextResponse.json({
       success: true,
+      results
     });
-    
   } catch (error) {
     console.log(error)
     return NextResponse.json(
@@ -67,102 +90,4 @@ export async function POST(request: Request) {
       { status: 500 }
     )
   }
-}
-// Define los tipos para la estructura de RichText de Payload
-type Direction = "ltr" | "rtl" | null | undefined;
-
-type Format = "" | "left" | "start" | "center" | "right" | "end" | "justify" | undefined
-
-interface TextNode {
-  detail: number;
-  format: number;
-  mode: "normal";
-  style: string;
-  text: string;
-  type: "text";
-  version: number;
-  [key: string]: any; // Permite propiedades adicionales con índice de tipo string
-}
-
-interface ParagraphNode {
-  children: TextNode[];
-  direction: Direction;
-  format: Format;
-  indent: number;
-  type: "paragraph";
-  version: number;
-  textFormat: number;
-  textStyle: string;
-  [key: string]: any; // Permite propiedades adicionales con índice de tipo string
-}
-
-interface RootNode {
-  children: ParagraphNode[];
-  direction: Direction;
-  format: Format;
-  indent: number;
-  type: "root";
-  version: number;
-  [key: string]: any; // Permite propiedades adicionales con índice de tipo string
-}
-
-interface PayloadRichText {
-  root: RootNode;
-  [key: string]: any;
-}
-
-/**
- * Convierte texto plano a la estructura de RichText de Payload CMS
- * @param text - El texto plano a convertir
- * @param direction - La dirección del texto ("ltr" o "rtl")
- * @returns La estructura de RichText compatible con Payload CMS
- */
-function textToPayloadRichText(text: string, direction: Direction = "ltr"): PayloadRichText {
-  // Dividir el texto en párrafos
-  const paragraphs = text.split('\n\n').filter(p => p.trim() !== '');
-  
-  // Si no hay texto, crear al menos un párrafo vacío
-  if (paragraphs.length === 0) {
-    paragraphs.push('');
-  }
-  
-  // Crear los nodos de párrafo
-  const children: ParagraphNode[] = paragraphs.map(paragraph => {
-    const textNode: TextNode = {
-      detail: 0,
-      format: 0,
-      mode: "normal",
-      style: "",
-      text: paragraph.trim(),
-      type: "text",
-      version: 1
-    };
-    
-    const paragraphNode: ParagraphNode = {
-      children: [textNode],
-      direction: direction,
-      format: "",
-      indent: 0,
-      type: "paragraph",
-      version: 1,
-      textFormat: 0,
-      textStyle: ""
-    };
-    
-    return paragraphNode;
-  });
-  
-  // Construir la estructura completa
-  const rootNode: RootNode = {
-    children: children,
-    direction: direction,
-    format: "",
-    indent: 0,
-    type: "root",
-    version: 1
-  };
-  
-  return {
-    root: rootNode
-  };
 }

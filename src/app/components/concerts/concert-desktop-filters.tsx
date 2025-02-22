@@ -12,7 +12,7 @@ import {
 } from '@/components/ui/select'
 import { Calendar } from '@/components/ui/calendar'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
-import { X, Search, CalendarIcon, ChevronLeft, ChevronRight } from 'lucide-react'
+import { X, Search, CalendarIcon } from 'lucide-react'
 import { format } from 'date-fns'
 import { es } from 'date-fns/locale'
 import { cn } from '@/lib/utils'
@@ -53,7 +53,7 @@ export function DesktopFilters({
         variant={activeQuickFilter === 'today' ? 'default' : 'outline'}
         size="sm"
         onClick={() => handleQuickDateFilter('today')}
-        className={activeQuickFilter === 'today' ? 'bg-black text-white' : ''}
+        className={activeQuickFilter === 'today' ? 'bg-black text-white' : 'hover:bg-gray-300 cursor-pointer'}
       >
         Hoy
       </Button>
@@ -61,7 +61,7 @@ export function DesktopFilters({
         variant={activeQuickFilter === 'tomorrow' ? 'default' : 'outline'}
         size="sm"
         onClick={() => handleQuickDateFilter('tomorrow')}
-        className={activeQuickFilter === 'tomorrow' ? 'bg-black text-white' : ''}
+        className={activeQuickFilter === 'tomorrow' ? 'bg-black text-white' : 'hover:bg-gray-300 cursor-pointer'}
 
       >
         Mañana
@@ -70,14 +70,14 @@ export function DesktopFilters({
         variant={activeQuickFilter === 'thisWeek' ? 'default' : 'outline'}
         size="sm"
         onClick={() => handleQuickDateFilter('thisWeek')}
-        className={activeQuickFilter === 'thisWeek' ? 'bg-black text-white' : ''}
+        className={activeQuickFilter === 'thisWeek' ? 'bg-black text-white' : 'hover:bg-gray-300 cursor-pointer'}
 
       >
         Esta semana
       </Button>
       <Button
         variant={activeQuickFilter === 'thisMonth' ? 'default' : 'outline'}
-        className={activeQuickFilter === 'thisMonth' ? 'bg-black text-white' : ''}
+        className={activeQuickFilter === 'thisMonth' ? 'bg-black text-white' : 'hover:bg-gray-300 cursor-pointer'}
         size="sm"
         onClick={() => handleQuickDateFilter('thisMonth')}
       >
@@ -133,7 +133,7 @@ export function DesktopFilters({
               variant="ghost" 
               size="sm" 
               onClick={clearAllFilters}
-              className="h-6"
+              className="h-6 hover:bg-gray-300 cursor-pointer"
             >
               Limpiar todos
             </Button>
@@ -160,7 +160,7 @@ export function DesktopFilters({
               onChange={(e) => setSearchTerm(e.target.value)}
               className="h-9"
             />
-            <Button type="submit" size="sm">
+            <Button type="submit" size="sm" className='hover:bg-gray-300 cursor-pointer'>
               <Search className="h-4 w-4 mr-2" />
               Buscar
             </Button>
@@ -172,7 +172,7 @@ export function DesktopFilters({
           onValueChange={(value) => updateFilters({ sort: value })}
         >
           <SelectTrigger className="w-[200px]">
-            <SelectValue placeholder="Ordenar por" />
+            <SelectValue className='hover:bg-gray-300 cursor-pointer' placeholder="Ordenar por" />
           </SelectTrigger>
           <SelectContent className='bg-white'>
             <SelectItem value="startDate">Más próximos</SelectItem>
@@ -192,6 +192,7 @@ export function DesktopFilters({
                 size="sm"
                 className={cn(
                   'ml-auto',
+                  'hover:bg-gray-300 cursor-pointer',
                   !date && 'text-muted-foreground'
                 )}
               >
@@ -244,7 +245,7 @@ export function DesktopFilters({
               <Button
                 key={tag.id}
                 variant={isSelected ? 'default' : 'outline'}
-                className={isSelected ? 'bg-black text-white' : ''}
+                className={isSelected ? 'bg-black text-white cursor-pointer' : 'hover:bg-gray-300 cursor-pointer'}
                 size="sm"
                 onClick={() => {
                   const currentTags = new Set(selectedTags)

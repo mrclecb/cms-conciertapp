@@ -33,7 +33,7 @@ export function PaginationControls({
     pages.push(
       <Button
         key={1}
-        className="cursor-pointer hidden sm:inline-flex"
+        className={currentPage === 1 ? `bg-black text-white hidden sm:inline-flex` : `cursor-pointer hover:bg-gray-300 hidden sm:inline-flex`}
         variant={currentPage === 1 ? 'default' : 'outline'}
         size="sm"
         onClick={() => router.push(createPageURL(1))}
@@ -45,7 +45,7 @@ export function PaginationControls({
     // Puntos suspensivos izquierdos si necesario
     if (currentPage > 3) {
       pages.push(
-        <Button key="dots-1" variant="ghost" size="sm" className="cursor-default hidden sm:inline-flex" disabled>
+        <Button key="dots-1" variant="ghost" size="sm" className="cursor-default hover:bg-gray-300 hidden sm:inline-flex" disabled>
           <MoreHorizontal className="h-4 w-4" />
         </Button>
       )
@@ -56,7 +56,7 @@ export function PaginationControls({
       pages.push(
         <Button
           key={i}
-          className="cursor-pointer"
+          className={currentPage === i ? `bg-black text-white` : `cursor-pointer hover:bg-gray-300`}
           variant={currentPage === i ? 'default' : 'outline'}
           size="sm"
           onClick={() => router.push(createPageURL(i))}
@@ -80,7 +80,7 @@ export function PaginationControls({
       pages.push(
         <Button
           key={totalPages}
-          className="cursor-pointer hidden sm:inline-flex"
+          className={currentPage === totalPages ? `bg-black text-white hidden sm:inline-flex` : `hover:bg-gray-300 cursor-pointer hidden sm:inline-flex`}
           variant={currentPage === totalPages ? 'default' : 'outline'}
           size="sm"
           onClick={() => router.push(createPageURL(totalPages))}
@@ -98,7 +98,7 @@ export function PaginationControls({
       <Button
         variant="outline"
         size="sm"
-        className="cursor-pointer"
+        className="cursor-pointer hover:bg-gray-300"
         onClick={() => router.push(createPageURL(currentPage - 1))}
         disabled={!hasPrevPage}
       >
@@ -113,7 +113,7 @@ export function PaginationControls({
       <Button
         variant="outline"
         size="sm"
-        className="cursor-pointer"
+        className="cursor-pointer hover:bg-gray-300"
         onClick={() => router.push(createPageURL(currentPage + 1))}
         disabled={!hasNextPage}
       >

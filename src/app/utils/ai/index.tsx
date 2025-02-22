@@ -34,8 +34,8 @@ type ConcertSEO = {
 }
 
 const schema = z.object({
-    metatitle: z.string().describe('Título optimizado para SEO (55-60 caracteres) - Considera el nombre de la app: Conciertapp o Conciert.app'),
-    metadescription: z.string().describe("Descripción optimizada para SEO (150-160 caracteres)"),
+    metatitle: z.string().describe('Título optimizado para SEO (Entre 55 y 60 caracteres de largo) - Considera el nombre de la app: Conciertapp, no utilices caracteres extraños'),
+    metadescription: z.string().describe("Descripción optimizada para SEO (Entre 150 y 160 caracteres de largo)"),
     keywords: z.array(
         z.object({
             id: z.string().describe('Identificador único de la keyword'),
@@ -48,8 +48,8 @@ export async function generateSEO(concert: Concert): Promise<ConcertSEO> {
     const artists = concert.artists?.map((artist: any) => artist.name).join(', ') || ''; 
     const prompt =
     `Tienes que esctibir las metaetiquetas para el landing page o la vista única de una entidad tipo concierto o evento musical` + 
-    `Los datos del concierto son: Performers: ${artists} la fecha de ${concert.startDate} en ${concert.venue}` + 
-    `Genera keywords en base acentuando el nombre del evento: ${concert.title} en el lugar: ${concert.venue} y ${concert.title} ${concert.startDate}, tambien genera keywords para hacer crecer la webapp considerando el valor que agrega de tener toda la info de eventos a la mano incluido el probable setlist de cada artista`
+    `Los datos del concierto son: Performers: ${artists} la fecha de ${concert.startDate} en ${typeof concert.venue !== 'string' ? concert.venue.name : ''}` + 
+    `Genera keywords en base acentuando el nombre del evento: ${concert.title} en el lugar: ${typeof concert.venue !== 'string' ? concert.venue.name : ''} y ${concert.title} ${concert.startDate}, tambien genera keywords para hacer crecer la webapp considerando el valor que agrega de tener toda la info de eventos a la mano incluido el probable setlist de cada artista`
 
     const system = 'Eres un experto en SEO y en Copywriting, tienes experiencia en llegar en el uso de keywords al momento de definir meta-tags eficaces a la hora de posicionarse en buscadores.' +
     'Necesitas posicionar tu naciente web app, su nombre es conciert.app o conciertapp y tienes que incentivar el uso de sus features como el acceso rápido a su información y a sus setlist';
