@@ -13,6 +13,8 @@ import { Tags } from './collections/Tags'
 import { Venues } from './collections/Venues'
 import { Artists } from './collections/Artists'
 import { Setlists } from './collections/Setlists'
+import { ThirdPartyAccess } from './collections/ThirdPartyAccess'
+
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -23,7 +25,7 @@ export default buildConfig({
       baseDir: path.resolve(dirname),
     },
   },
-  collections: [Users, Media, Artists, Tags, Venues, Concerts, Setlists],
+  collections: [Users, Media, Artists, Tags, Venues, Concerts, Setlists, ThirdPartyAccess],
   editor: lexicalEditor(),
   secret: process.env.PAYLOAD_SECRET || '',
   typescript: {
