@@ -66,7 +66,7 @@ const RelatedConcerts: React.FC<RelatedConcertsProps> = ({
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {relatedConcerts.map((concert) => (
           <Link 
-            href={`/conciertos/${concert.slug}`} 
+            href={`/concerts/${concert.slug}`} 
             key={concert.id}
             className="transition-transform duration-300 hover:scale-105"
           >
