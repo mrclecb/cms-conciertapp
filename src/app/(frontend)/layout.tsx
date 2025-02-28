@@ -21,7 +21,8 @@ export default async function RootLayout(props: { children: React.ReactNode }) {
   const { children } = props
 
   return (
-    <html lang="en" className={oswald.className}>
+    <html lang="es-CL" className={oswald.className}>
+      <link rel="icon" href="/favicon.ico" sizes="any" />
       <meta name='google-adsense-account' content='ca-pub-7692922132309887'/>
       <body>
         {process.env.NEXT_PUBLIC_GA_ID && (
