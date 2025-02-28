@@ -12,6 +12,7 @@ export interface Artist {
   externalProfileURL?: string | null;
   description?: string;
   setlist?: {
+    setlistFmName?: string;
     setlist: string[];
   };
 }
