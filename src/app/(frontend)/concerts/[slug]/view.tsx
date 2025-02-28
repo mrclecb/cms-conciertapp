@@ -7,10 +7,11 @@ import { ChevronRight, CalendarDays, MapPin, Ticket } from 'lucide-react';
 import Link from 'next/link';
 import FadeImage from '@/app/components/ui/fade-image';
 import { ConcertViewProps } from './types';
-import { Artist, Media, Venue } from '@/payload-types';
+import { Artist, Media, Venue, Concert } from '@/payload-types';
 
 import DynamicArtistGrid from '@/app/components/artists/dynamic-artist-grid';
 import VenueInfoTabs from '@/app/components/concerts/concert-venue-tabs';
+import RelatedConcerts from '@/app/components/concerts/related-concerts';
 import { RichText } from '@payloadcms/richtext-lexical/react';
 
 const GradientText: React.FC<{ text: React.ReactElement, maxHeight?: number }> = ({ text, maxHeight = 200 }) => {
@@ -43,8 +44,12 @@ const GradientText: React.FC<{ text: React.ReactElement, maxHeight?: number }> =
   );
 };
 
+// Extendiendo ConcertViewProps para incluir los conciertos futuros
+interface ExtendedConcertViewProps extends ConcertViewProps {
+  futureConcerts?: Concert[];
+}
 
-const ConcertView: React.FC<ConcertViewProps> = ({ concert, formattedDate }) => {
+const ConcertView: React.FC<ExtendedConcertViewProps> = ({ concert, formattedDate, futureConcerts = [] }) => {
     const populatedArtists = concert?.artists?.filter((artist): artist is Artist => 
         typeof artist !== 'string'
       ) || [];
@@ -75,7 +80,6 @@ const ConcertView: React.FC<ConcertViewProps> = ({ concert, formattedDate }) => 
     return venue.images?.[0]?.image?.url || '';
   }
 
-
   const venueSection = {
     name: getVenueName(concert.venue),
     address: getVenueAddress(concert.venue),
@@ -88,6 +92,10 @@ const ConcertView: React.FC<ConcertViewProps> = ({ concert, formattedDate }) => 
     venue: venueSection,
   };
 
+  // Extract concert tags for related concerts
+  const concertTags = concert.tags?.map(tag => 
+    typeof tag === 'string' ? tag : tag.id
+  ) || [];
 
   return (
     <main className="container mx-auto px-4 py-8">
@@ -145,6 +153,14 @@ const ConcertView: React.FC<ConcertViewProps> = ({ concert, formattedDate }) => 
         <div>
           {concert?.additionalInfo?.description && <GradientText maxHeight={400} text={<RichText data={concert.additionalInfo.description} />} />}
         </div>
+        {/* Sección de Seguir Explorando - Conciertos Relacionados */}
+      {futureConcerts.length > 0 && (
+        <RelatedConcerts 
+          currentConcertId={concert.id}
+          currentConcertTags={concertTags}
+          futureConcerts={futureConcerts}
+        />
+      )}
         {/* Poster and Venue Info */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         </div>
@@ -200,14 +216,13 @@ const ConcertView: React.FC<ConcertViewProps> = ({ concert, formattedDate }) => 
         <VenueInfoTabs info={info} />
       </div>
 
-      
-
-       
       </div>
 
       {/* Artists Grid with Dynamic Setlist */}
        <DynamicArtistGrid artists={populatedArtists} />
     </div>}
+
+  
     </main>
   );
 };

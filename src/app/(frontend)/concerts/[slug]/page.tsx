@@ -63,6 +63,34 @@ async function getConcertBySlug(slug: string): Promise<Concert | null> {
   return concerts.docs[0] || null;
 }
 
+// Obtener conciertos futuros para la sección "Seguir explorando"
+async function getFutureConcerts(): Promise<Concert[]> {
+  const today = new Date().toISOString();
+  
+  const futureConcerts = await payload.find({
+    collection: 'concerts',
+    where: {
+      and: [
+        {
+          startDate: {
+            greater_than_equal: today,
+          },
+        },
+        {
+          status: {
+            equals: 'draft',
+          },
+        },
+      ],
+    },
+    depth: 1, // Profundidad suficiente para información básica
+    limit: 20, // Limitamos para optimizar rendimiento
+    sort: 'startDate', // Ordenamos por fecha
+  });
+
+  return futureConcerts.docs as Concert[];
+}
+
 // Generate metadata for SEO
 export async function generateMetadata({
   params,
@@ -104,7 +132,7 @@ export default async function ConcertPage({
 }: { 
   params: Promise<{ slug: string }> 
 }) {
-  const {slug} = await params;
+  const { slug } = await params;
   const concert = await getConcertBySlug(slug);
 
   if (!concert) {
@@ -124,9 +152,11 @@ export default async function ConcertPage({
       } as Artist // Assert as Artist type
     }),
   )
-
   
   concert.artists = enhancedArtists as (string | Artist)[]
+
+  // Obtener conciertos futuros para la sección "Seguir explorando"
+  const futureConcerts = await getFutureConcerts();
 
   const formattedDate = formatDate(concert.startDate);
 
@@ -163,6 +193,10 @@ export default async function ConcertPage({
                 }),
               }}
             />
-      <ConcertView concert={concert} formattedDate={formattedDate} />
+      <ConcertView 
+        concert={concert} 
+        formattedDate={formattedDate} 
+        futureConcerts={futureConcerts} 
+      />
     </div>;
 }

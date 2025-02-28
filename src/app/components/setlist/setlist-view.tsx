@@ -1,9 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { Music, X, Info, Disc } from 'lucide-react';
+import { Music, X, Disc } from 'lucide-react';
 import { Artist } from '@/app/(frontend)/concerts/[slug]/types';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 const SetlistView: React.FC<{
   artist: Artist;
@@ -14,6 +13,8 @@ const SetlistView: React.FC<{
   
   // Verificar si hay setlist disponible
   const hasSetlist = artist.setlist?.setlist && artist.setlist.setlist.length > 0;
+
+  console.log('artist.setlist?', artist.setlist);
   // Información adicional ficticia (pueden añadirse estos campos al modelo Artist según necesidad)
   
   useEffect(() => {
@@ -42,7 +43,7 @@ const SetlistView: React.FC<{
           <div>
             <CardTitle className="text-base md:text-lg font-semibold flex items-center gap-2">
               <Disc className="w-5 h-5 text-primary" />
-              {artist.name}
+              Setlist de referencia
             </CardTitle>
           </div>
           <button
@@ -60,7 +61,7 @@ const SetlistView: React.FC<{
                   <div className="flex items-center justify-between mb-4">
                     <h3 className="text-sm font-medium flex items-center gap-2">
                       <Music className="w-4 h-4 text-primary" />
-                      Lista de canciones
+                      {artist.setlist?.setlistFmName}
                     </h3>
                   </div>
                   
