@@ -13,16 +13,21 @@ import DynamicArtistGrid from '@/app/components/artists/dynamic-artist-grid';
 import VenueInfoTabs from '@/app/components/concerts/concert-venue-tabs';
 import RelatedConcerts from '@/app/components/concerts/related-concerts';
 import { RichText } from '@payloadcms/richtext-lexical/react';
-
+import { useTheme } from '@/app/components/shared/theme-provider';
 const GradientText: React.FC<{ text: React.ReactElement, maxHeight?: number }> = ({ text, maxHeight = 200 }) => {
   const [isExpanded, setIsExpanded] = useState(false);
+  const { theme } = useTheme();
 
+  const isDark = theme === 'dark';
+  
+  const beforeGradient = isDark ? 'before:from-[#121212] before:to-transparent' : 'before:from-white before:to-transparent';
+  
   return (
     <div className="relative">
       <div
         className={`relative ${
           !isExpanded
-            ? "max-h-52 overflow-hidden before:absolute before:bottom-0 before:left-0 before:h-24 before:w-full before:bg-gradient-to-t before:from-white before:to-transparent"
+            ? "max-h-52 overflow-hidden before:absolute before:bottom-0 before:left-0 before:h-24 before:w-full before:bg-gradient-to-t " + beforeGradient
             : ""
         }`}
       >
@@ -153,14 +158,18 @@ const ConcertView: React.FC<ExtendedConcertViewProps> = ({ concert, formattedDat
         <div>
           {concert?.additionalInfo?.description && <GradientText maxHeight={400} text={<RichText data={concert.additionalInfo.description} />} />}
         </div>
-        {/* Sección de Seguir Explorando - Conciertos Relacionados */}
-      {futureConcerts.length > 0 && (
-        <RelatedConcerts 
-          currentConcertId={concert.id}
-          currentConcertTags={concertTags}
-          futureConcerts={futureConcerts}
-        />
-      )}
+        
+        {/* Sección de Seguir Explorando - Solo visible en desktop */}
+        <div className="hidden lg:block">
+          {futureConcerts.length > 0 && (
+            <RelatedConcerts 
+              currentConcertId={concert.id}
+              currentConcertTags={concertTags}
+              futureConcerts={futureConcerts}
+            />
+          )}
+        </div>
+        
         {/* Poster and Venue Info */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         </div>
@@ -196,6 +205,18 @@ const ConcertView: React.FC<ExtendedConcertViewProps> = ({ concert, formattedDat
       <div>
         {concert?.additionalInfo?.description && <GradientText maxHeight={200} text={<RichText data={concert.additionalInfo.description} />} />}
       </div>
+      
+      {/* Sección de Seguir Explorando - Solo visible en desktop */}
+      <div className="hidden lg:block">
+        {futureConcerts.length > 0 && (
+          <RelatedConcerts 
+            currentConcertId={concert.id}
+            currentConcertTags={concertTags}
+            futureConcerts={futureConcerts}
+          />
+        )}
+      </div>
+      
       {/* Poster and Venue Info */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         {concert.poster && (
@@ -222,6 +243,16 @@ const ConcertView: React.FC<ExtendedConcertViewProps> = ({ concert, formattedDat
        <DynamicArtistGrid artists={populatedArtists} />
     </div>}
 
+    {/* Sección de Seguir Explorando - Visible solo en mobile al final de todo el contenido */}
+    <div className="lg:hidden mt-8 mb-4">
+      {futureConcerts.length > 0 && (
+        <RelatedConcerts 
+          currentConcertId={concert.id}
+          currentConcertTags={concertTags}
+          futureConcerts={futureConcerts}
+        />
+      )}
+    </div>
   
     </main>
   );

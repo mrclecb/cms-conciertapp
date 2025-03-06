@@ -17,6 +17,7 @@ import { format } from 'date-fns'
 import { es } from 'date-fns/locale'
 import { cn } from '@/lib/utils'
 import { DateRange } from 'react-day-picker'
+import { useTheme } from '../shared/theme-provider'
 
 interface DesktopFiltersProps {
   tags: any[]
@@ -46,6 +47,7 @@ export function DesktopFilters({
   const hasDateFilter = searchParams.get('dateFrom') && searchParams.get('dateTo')
   const hasSearch = searchParams.get('search')
   const hasActiveFilters = selectedTags.length > 0 || hasDateFilter || hasSearch
+  const { theme } = useTheme();
 
   const QuickDateFilters = () => (
     <div className="flex gap-2">
@@ -144,7 +146,7 @@ export function DesktopFilters({
   }
 
   return (
-    <div className="bg-white rounded-lg  pb-6 space-y-4">
+    <div className="rounded-lg  pb-6 space-y-4">
       <div className="flex items-center justify-between gap-4">
         <div className="flex-1 max-w-xl">
           <form
@@ -174,7 +176,7 @@ export function DesktopFilters({
           <SelectTrigger className="w-[200px]">
             <SelectValue className='hover:bg-gray-300 cursor-pointer' placeholder="Ordenar por" />
           </SelectTrigger>
-          <SelectContent className='bg-white'>
+          <SelectContent className={theme === 'dark' ? 'bg-gray-900' : 'bg-white'}>
             <SelectItem value="startDate">Más próximos</SelectItem>
             <SelectItem value="-startDate">Más lejanos</SelectItem>
           </SelectContent>
@@ -211,7 +213,7 @@ export function DesktopFilters({
                 )}
               </Button>
             </PopoverTrigger>
-            <PopoverContent className="w-auto p-0 bg-white" align="end">
+            <PopoverContent className={theme === 'dark' ? 'bg-gray-900 w-auto p-0' : 'bg-white w-auto p-0'} align="end">
               <Calendar
                 initialFocus
                 mode="range"

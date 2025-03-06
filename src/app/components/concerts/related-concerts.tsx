@@ -61,16 +61,19 @@ const RelatedConcerts: React.FC<RelatedConcertsProps> = ({
   };
 
   return (
-    <div className="mt-16">
-      <h2 className="text-2xl font-bold mb-6">Seguir explorando</h2>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+    <div className="mt-8 mb-12 px-4 lg:px-0">
+      <div className="flex items-center mb-6">
+        <h2 className="text-2xl font-bold dark:text-white">Conciertos relacionados</h2>
+        <div className="ml-3 h-1 w-12 bg-gradient-to-r from-amber-500 to-red-500 dark:from-indigo-400 dark:to-purple-500 rounded-full"></div>
+      </div>
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {relatedConcerts.map((concert) => (
           <Link 
             href={`/concerts/${concert.slug}`} 
             key={concert.id}
             className="transition-transform duration-300 hover:scale-105"
           >
-            <Card className="h-full overflow-hidden hover:shadow-lg transition-shadow">
+            <Card className="h-full overflow-hidden hover:shadow-lg transition-shadow border border-gray-200 dark:border-gray-700">
               <CardContent className="p-0">
                 <div className="relative">
                   <FadeImage

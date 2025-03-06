@@ -3,6 +3,7 @@ import { useState } from 'react'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
+import { useTheme } from '@/app/components/shared/theme-provider'
 import {
   Sheet,
   SheetContent,
@@ -44,6 +45,7 @@ export function MobileFilters({
 }: MobileFiltersProps) {
   const [isOpen, setIsOpen] = useState(false)
   const [searchTerm, setSearchTerm] = useState(searchParams.get('search') || '')
+  const { theme } = useTheme()
 
   // Contadores para el indicador de filtros activos
   const selectedTags = searchParams.get('tag')?.split(',').filter(Boolean) || []
@@ -136,7 +138,7 @@ export function MobileFilters({
 
   return (
     <div className="space-y-4">
-      <div className="sticky top-0 bg-white z-10 pb-4">
+      <div className="sticky top-0 z-10 pb-4">
         <div className="flex items-center gap-2">
           <Input
             placeholder="Buscar..."
@@ -160,7 +162,7 @@ export function MobileFilters({
                 )}
               </Button>
             </SheetTrigger>
-            <SheetContent side="bottom" className="h-[75vh] bg-white">
+            <SheetContent side="bottom" className={`h-[75vh] ${theme ==='dark' ? 'bg-black' : 'bg-white'}`}>
               <SheetHeader className="pb-4">
                 <SheetTitle>Filtros</SheetTitle>
               </SheetHeader>
@@ -175,7 +177,7 @@ export function MobileFilters({
                     <SelectTrigger className="w-full">
                       <SelectValue placeholder="Ordenar por" />
                     </SelectTrigger>
-                    <SelectContent className='bg-white'>
+                    <SelectContent className=''>
                       <SelectItem value="startDate">Más próximos</SelectItem>
                       <SelectItem value="-startDate">Más lejanos</SelectItem>
                     </SelectContent>
@@ -218,7 +220,7 @@ export function MobileFilters({
                 </div>
               </div>
 
-              <SheetFooter className="absolute bottom-0 left-0 right-0 p-4 bg-white border-t">
+              <SheetFooter className="absolute bottom-0 left-0 right-0 p-4 border-t">
                 <div className="flex gap-2 w-full">
                   <Button 
                     variant="ghost" 

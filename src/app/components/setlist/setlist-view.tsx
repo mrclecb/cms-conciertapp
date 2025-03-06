@@ -39,7 +39,7 @@ const SetlistView: React.FC<{
   return (
     <div className="col-span-3 transition-all animate-in slide-in-from-right duration-300">
       <Card className="mt-2 border-none border-gray-200 shadow-sm overflow-hidden">
-        <CardHeader className="flex flex-row items-center justify-between bg-gray-50 pb-3">
+        <CardHeader className="flex flex-row items-center justify-between pb-3">
           <div>
             <CardTitle className="text-base md:text-lg font-semibold flex items-center gap-2">
               <Disc className="w-5 h-5 text-primary" />
@@ -65,7 +65,7 @@ const SetlistView: React.FC<{
                     </h3>
                   </div>
                   
-                  <ScrollArea className="h-[300px] rounded-md p-4 bg-white">
+                  <ScrollArea className="h-[300px] rounded-md p-4">
                     <ol className="space-y-3">
                       {artist.setlist?.setlist.map((song, index) => (
                         <li key={index} className="flex items-start gap-3 group pb-2 border-b border-gray-100  last:border-0">

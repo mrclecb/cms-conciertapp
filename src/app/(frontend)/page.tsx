@@ -10,6 +10,7 @@ import { CollectionSlug, getPayload } from 'payload'
 import { Metadata } from 'next'
 import configPromise from '@payload-config'
 import { formatDate } from '../lib/utils'
+import { ThemeDemo } from '../components/shared/theme-demo';
 
 export const metadata: Metadata = {
   title: 'Conciertapp | Descubre los mejores conciertos en Chile',
@@ -215,7 +216,7 @@ export default async function Home({
 
   return (
     <main className="container mx-auto px-4 py-8">
-      <h1 className="text-3xl font-bold mb-8">Próximos conciertos</h1>
+      <h2 className="text-3xl font-bold mb-8">Próximos conciertos</h2>
 
       <Suspense fallback={<div>Cargando filtros...</div>}>
         <ConcertFilters tags={tags} />
