@@ -52,7 +52,7 @@ const DynamicArtistGrid: React.FC<ArtistGridProps> = ({ artists }) => {
       <div>
         
         
-      { isVisible && <Alert className="dark:bg-blue-900 border border-blue-800 flex items-center justify-between mb-2">
+      { isVisible && <Alert className=" border border-blue-800 flex items-center justify-between mb-2">
         <div className="flex items-center">
           <Info className="h-4 w-4 text-blue-500 mr-2 flex-shrink-0" />
           <AlertDescription className="text-blue-500 m-0">

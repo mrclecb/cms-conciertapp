@@ -1,7 +1,9 @@
+'use client'
 import React from 'react';
 import Link from 'next/link';
 import { Card, CardContent } from '@/components/ui/card';
 import { Calendar, MapPin, Users } from 'lucide-react';
+import { useTheme } from '../shared/theme-provider';
 
 
 type ArtistType = {
@@ -56,12 +58,15 @@ export function OverlayCard({ title, date, venue, artists, slug, poster }: Conce
 
 // Card con imagen del artista
 export function ArtistImageCard({ title, date, venue, artists, slug }: ConcertCardProps) {
+  const { theme } = useTheme();
+  const classes = theme === 'dark' ? 'bg-gray-800 border-slate-700 text-white' : 'bg-white border-slate-200 text-black';
+  const contentClasses = theme === 'dark' ? 'bg-gray-800  text-white' : 'bg-slate-100 text-black';
   // Usar la primera imagen de artista disponible
   const artistImage = artists.find(a => a.profileImage)?.profileImage?.url || 
                      artists.find(a => a.externalProfileURL)?.externalProfileURL;
 
   return (
-    <Card className="hover:shadow-lg transition-shadow overflow-hidden dark:bg-slate-800 dark:border-slate-700">
+    <Card className={`hover:shadow-lg transition-shadow overflow-hidden ${classes}`}>
       <div className="flex flex-col md:flex-row h-full">
         {/* Imagen lateral */}
         <div className="w-full md:w-2/5 h-48 md:h-auto relative">
@@ -74,22 +79,22 @@ export function ArtistImageCard({ title, date, venue, artists, slug }: ConcertCa
         </div>
         
         {/* Contenido */}
-        <div className="w-full md:w-3/5 p-6">
+        <div className={`w-full md:w-3/5 p-6 ${contentClasses}`}>
           <Link href={`/concerts/${slug}`}>
-            <h3 className="text-xl font-bold mb-4 hover:text-blue-600 dark:hover:text-yellow-400 dark:text-white transition-colors">
+            <h3 className="text-xl font-bold mb-4 hover:text-blue-600 dark:hover:text-yellow-400  transition-colors">
               {title}
             </h3>
           </Link>
-          <div className="space-y-3">
-            <div className="flex items-center text-muted-foreground">
+          <div className="space-y-3 ">
+            <div className="flex items-center">
               <Calendar className="w-4 h-4 mr-2" />
               <span className="text-sm">{date}</span>
             </div>
-            <div className="flex items-center text-muted-foreground">
+            <div className="flex items-center">
               <MapPin className="w-4 h-4 mr-2" />
               <span className="font-medium">{venue}</span>
             </div>
-            <div className="flex items-center text-muted-foreground">
+            <div className="flex items-center">
               <Users className="w-4 h-4 mr-2" />
               <span className="text-sm">{artists.map(a => a.name).slice(0,9).join(', ')} {artists.length > 10 ? 'y mas' : ''} </span>
             </div>
@@ -111,15 +116,15 @@ export function MinimalCard({ title, date, venue, artists, slug }: ConcertCardPr
           </h3>
         </Link>
         <div className="space-y-2">
-          <div className="flex items-center text-muted-foreground">
+          <div className="flex items-center text-white">
             <Calendar className="w-4 h-4 mr-2" />
             <span className="text-sm">{date}</span>
           </div>
-          <div className="flex items-center text-muted-foreground">
+          <div className="flex items-center text-white">
             <MapPin className="w-4 h-4 mr-2" />
             <span className="font-medium">{venue}</span>
           </div>
-          <div className="flex items-center text-muted-foreground">
+          <div className="flex items-center text-white">
             <Users className="w-4 h-4 mr-2" />
             <span className="text-sm">{artists.map(a => a.name).slice(0,9).join(', ')} {artists.length > 10 ? 'y mas' : ''} </span>
           </div>
